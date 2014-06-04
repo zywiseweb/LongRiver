@@ -1,0 +1,82 @@
+		
+	</head>
+  
+	<body><div id="body-wrapper"> <!-- Wrapper for the radial gradient background -->
+		<div class="nav top">
+			
+                <ul>
+                    <li>
+                        状态监控
+                    </li>
+                </ul>
+         </div>
+
+		<div id="sidebar"><div id="sidebar-wrapper"> <!-- Sidebar with logo and menu -->
+			<h1 id="sidebar-title"><a href="#">系统监控</a></h1>
+			<a href="#"><img id="logo" src="images/logo.png" alt="Simpla Admin logo" /></a>
+		  
+			<!-- Sidebar Profile links -->
+			<div id="profile-links">
+				
+				<br />
+			
+				<br />
+				<a href="#" title="View the Site">访问系统</a> | <a href="/logout" title="Sign Out">退出</a>
+			</div>        
+			
+			<ul id="main-nav">
+                            
+
+				<% var title="";%>
+				<% var sub_title="";%>
+                                
+				<% for(var i=0; i<menu.current; i++) { %>
+					<li> 
+                                        <% if(menu.current.current){ %>
+                                        <a href=<% menu.current[i].route %> class="nav-top-item current">
+                                           <%= menu.current[i].name %>
+                                           <% var title=appmodule[i].name;%>
+                                           </a>
+                                        <% }else{  %>
+                                             <a href=<% menu.current[i].route %> class="nav-top-item">
+                                           <%= menu.current[i].name %>
+                                           <% var title=appmodule[i].name;%>
+                                           </a>
+                                        <% } %>
+                                        
+						
+						<ul>
+							<% for(var j=0; j<menu.current[i].sub.length; j++) { %>
+							<li>
+                                                                  <% if(menu.current[i].sub[j].current){ %>
+									<a href=<%= menu.current[i].sub[j].route %> class="current"> 
+										<%= menu.current[i].sub[j].name %>
+										<% var menu.current[i].sub[j].name %>
+									</a>
+								<% }else{%>
+									<a href=<%= menu.current[i].sub[j].route %>> 
+										<%= menu.current[i].sub[j].name %>
+										<% var menu.current[i].sub[j].name;%>
+									</a>
+								<% } %>
+							</li>
+							<% } %>
+
+						</ul>
+       				 </li>
+   				 <% } %>
+
+
+			</ul> <!-- End #main-nav -->
+		</div></div> <!-- End #sidebar -->
+		
+		<div id="main-content"> <!-- Main Content Section with everything -->
+			
+			
+			
+			
+		
+			<div class="clear"></div> <!-- End .clear -->
+			
+			
+				

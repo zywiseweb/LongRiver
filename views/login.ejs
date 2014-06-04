@@ -1,0 +1,42 @@
+<%- include header %>
+		
+	</head>
+  
+	<body id="login">
+		
+		<div id="login-wrapper" class="png_bg">
+			<div id="login-top">
+			
+				<h1>系统监控</h1>
+				<!-- Logo (221px width) -->
+				<img id="logo" src="images/logo.png" alt="Simpla Admin logo" />
+			</div> <!-- End #logn-top -->
+			
+			<div id="login-content">
+				
+				<form method="post">
+					<% if (message) { %>
+ 						<div class="notification information png_bg"> <div><%= message %></div></div>
+					<% } %>
+					
+					<p>
+						<label>账号</label>
+						<input class="text-input" type="text" name="username"/>
+					</p>
+					<div class="clear"></div>
+					<p>
+						<label>密码</label>
+						<input class="text-input" type="password" name="password"/>
+					</p>
+					<div class="clear"></div>
+					<p>
+						<input class="button" type="submit" value="登录" />
+					</p>
+					
+				</form>
+			</div> <!-- End #login-content -->
+			
+		</div> <!-- End #login-wrapper -->
+		
+  </body>
+  </html>

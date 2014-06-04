@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+    </head>
+    <body>
+        <div>初始化数据库</div>
+        <% if (message) { %>
+            <div><%= message %></div>
+        <% } %>
+	
+        <form method="post" action="/init">
+            请输入初始化密码
+            <input type="password" name="password"/>
+
+						<input class="button" type="submit" value="初始化" />
+					
+        </form>
+    </body>
+</html>
