@@ -3,7 +3,7 @@ var structure = [
     {
         name: '个人空间',
         id: 2,
-        route: '',
+        route: '/person',
         sub: [{
                 name: '首页',
                 id: 21,
@@ -15,7 +15,7 @@ var structure = [
     {
         name: '系统管理',
         id: 1,
-        route: '/system',
+        route: '/user',
         sub: [
             {
                 name: '用户与权限',
@@ -25,7 +25,20 @@ var structure = [
                     {
                         name: '用户管理',
                         id: 111,
-                        route: '/user'
+                        route: '/user',
+                        add:{
+                            name:'添加',
+                            route:'/useradd'
+                        },
+                        remove:{
+                            name:'删除',
+                            route:'/userDelete'
+                        },
+                        edit:{
+                            name:'编辑',
+                            route:'/userEdit'
+                        }
+                        
                     },
                     {
                         name: '用户权限',
@@ -36,6 +49,29 @@ var structure = [
                         name: '部门管理',
                         id: 113,
                         route: '/department'
+                    }
+                ]
+            },
+            {
+                name: '服务器管理',
+                id: 112,
+                route: '',
+                sub: []
+            }
+        ]
+    },
+    {
+       name: '账号管理',
+        id: 3,
+        route: '/user',
+        sub: [
+            {
+                name: '新浪账号',
+                id: 31,
+                route: '',
+                sub: [
+                    {
+                        
                     }
                 ]
             }

@@ -1,8 +1,55 @@
 var db = require('../dao/dao');
+var mongoose = require('../database/mongodb');
+
+var Schema = mongoose.Schema;
+
+/**
+ * 权限模型
+ * @type Schema
+ */
+var roleSchema = new Schema({
+    id: {type: Number, required: true, unique: true},
+    name: {type: String, required: true, unique: true}, //用户名
+    createTime: {type: Date, default: Date.now}, //创建时间
+    homeRoute: {type: String}, //首页路由
+    access: {}//角色权限,方具体的权限内容
+});
+
+var roleManager = mongoose.model('Role', roleSchema);
+
+/**
+ * 
+ * @param {type} where
+ * @param {type} callback
+ * @returns {undefined}
+ */
+var findRole = function(where, callback) {
+    roleManager.findOne(where, callback);
+};
+/**
+ * 保存权限
+ * @param {type} role
+ * @param {type} callback
+ * @returns {undefined}
+ */
+exports.saveRole = function(role, callback) {
+    var newRole = new roleManager(role);
+    newRole.save(function(err) {
+        if (err) {
+            callback(err, '保存权限数据错误');
+            console.log(err);
+        } else {
+            callback(null, '权限: ' + role.name + " 已经保存.");
+            console.log('权限: ' + role.name + " 已经保存.");
+        }
+    });
+
+};
+
 
 exports.authRole = function(roleParam, callback) {
     var roleRoute = roleParam.route;
-    db.findRole({"id": roleParam.roleid}, function(err, role) {
+    findRole({"id": roleParam.roleid}, function(err, role) {
         if (err) {
             return callback(err);
         }
@@ -48,7 +95,7 @@ exports.getHome = function(roleID, callback) {
     if (!roleID) {
         return  callback({message: 'roleid is null'}, null);
     }
-    db.findRole({"id": roleID}, function(err, role) {
+    findRole({"id": roleID}, function(err, role) {
         if (err)
             return callback({message: 'Get role err'}, null);
         if (role) {
@@ -93,6 +140,26 @@ exports.getHome = function(roleID, callback) {
  * @param {type} route
  * @param {type} callback
  * @returns {undefined}
+ * {systems:[
+ *  {
+ *      name:名称，
+ *      route:路由
+ *      current:是否当前
+ *  }
+ * ],
+ * current:[
+ * {
+ *      name:名称，
+ *      route:路由
+ *      current:是否当前
+ *      sub:[{
+ *          name:名称，
+ *          route:路由
+ *          current:是否当前
+ *      }
+ *      ]
+ * }
+ * ]}
  */
 exports.getMenu = function(route, role, callback) {
     var menu = {
@@ -113,7 +180,7 @@ exports.getMenu = function(route, role, callback) {
                 getCurrent = true;
                 system.current = true;
                 var sub = access[i].sub;
-                
+
                 if (sub && sub.length > 0) {
                     for (var j = 0; j < sub.length; j++) {
                         var m = {
@@ -125,6 +192,9 @@ exports.getMenu = function(route, role, callback) {
                         if (m.route === route) {
                             m.current = true;
                         }
+                        if (!system.route) {
+                            system.route = sub[j].route;
+                        }
                         if (sub[j].sub && sub[j].sub.length > 0) {
                             for (var k = 0; k < sub[j].sub.length; k++) {
                                 var m2 = {
@@ -134,17 +204,20 @@ exports.getMenu = function(route, role, callback) {
                                 };
                                 if (m2.route === route) {
                                     m2.current = true;
+                                    m.current = true;
                                 }
                                 m.sub.push(m2);
+                                if (!system.route) {
+                                    system.route = sub[j].sub[k].route;
+                                }
                             }
                         }
                         menu.current.push(m);
                     }
-
                 }
             }
         }
         menu.systems.push(system);
     }
-    callback(null,menu);
+    callback(null, menu);
 };
