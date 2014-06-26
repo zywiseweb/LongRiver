@@ -129,9 +129,9 @@
 								</tr>
 							</tfoot>
 							<tbody>
-								<tr>
+								
 									<%  for(var i=0;i<users.results.length;i++){ %>
-        								
+        								<tr>
         								<td><%= users.results[i].name %></td>
         								<td><%= users.results[i].username %></td>
         								<td><%= users.results[i].role.roleName %></td>
@@ -140,11 +140,11 @@
 										<!-- Icons -->
 											<a href="/userEdit?" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
 										 	<a href="/userdelete?" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
-										</td>
+										</td></tr>
 									<% } %>
 									
 									
-								</tr>
+								
 
 							</tbodu>
 						</table>

@@ -1,0 +1,198 @@
+<%- include ../../header %>
+<script>
+    $(function() {
+
+        var name = $("#taskname");
+        var url = $("#url");
+        var sub_count = $("#sub_count");
+        var allFields = $([]).add(name).add(url).add(sub_count);
+        var info = $("#addInfo");
+        var infobox = $("#infobox");
+        var urlRegex = "^((https|http|ftp|rtsp|mms)?://).";
+        /*
+                + "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?"
+                + "(([0-9]{1,3}.){3}[0-9]{1,3}"
+                + "|"
+                + "([0-9a-z_!~*'()-]+.)*"
+                + "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]."
+                + "[a-z]{2,6})"
+                + "(:[0-9]{1,4})?"
+                + "((/?)|"
+                + "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$";>
+         */
+        $("#duSubmit").click(function() {
+
+            var bValid = true;
+            allFields.removeClass("ui-state-error");
+            bValid = bValid && checkLength(name, "任务名称", 1, 200);
+            bValid = bValid && checkLength(url, "任务地质", 1, 200);
+            bValid = bValid && checkRegexp(url, new RegExp(urlRegex), "地址格式有误。");
+            bValid = bValid && checkRegexp(sub_count, /^[0-9]*$/, "请输入正确数量。");
+            if (sub_count.val() < 1) {
+                updateTips("数量必须大于0.");
+                bValid = bValid && false;
+            }
+            if (sub_count.val() > 500) {
+                updateTips("数量必须小于500.");
+                bValid = bValid && false;
+            }
+            if (bValid) {
+                console.info("keyitijiao");
+                var param = {
+                    task: $("#task").val(),
+                    taskname: name.val(),
+                    url: url.val(),
+                    sub_count: sub_count.val(),
+                    task_type: $("#task_type").val(),
+                    speed: $("#speed").val()
+
+                };
+                updateTips2("正在提交，请稍后...");
+                $("#duSubmit").hide();
+                $.ajax({
+                    type: 'POST',
+                    url: "/newssupportNew",
+                    data: param,
+                    dataType: "text",
+                    success: function(text) {
+                        console.info(text);
+                        if (text === '1') {
+                            updateTips2("添加成功,页面即将调换到列表页。");
+                            setTimeout(function() {
+                                location.href = "/newssupport";
+                            }, 1000);
+
+                        } else {
+                            updateTips2(text);
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus) {
+                        updateTips("添加出错了，请稍后再试。");
+                    }
+                });
+            }
+
+        });
+        function updateTips(t) {
+            infobox.removeClass("information");
+            infobox.addClass("error");
+            info.text(t);
+            setTimeout(function() {
+                infobox.removeClass("error");
+                infobox.addClass("information");
+            }, 2000);
+        }
+        function updateTips2(t) {
+            info.text(t);
+        }
+
+        function checkLength(o, n, min, max) {
+            if (o.val().length > max || o.val().length < min) {
+                o.addClass("ui-state-error");
+                updateTips(n + " 输入有误");
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkRegexp(o, regexp, n) {
+            if (!(regexp.test(o.val()))) {
+
+                updateTips(n);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    });
+
+
+</script>
+
+
+<%- include ../../body %>  
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>新闻支持任务</h3>
+        <ul class="content-box-tabs">
+            <li><a href="#tab1" class="default-tab">网易</a></li> <!-- href must be unique and match the id of target div -->
+            <li><a href="#tab2">新浪</a></li>
+            <li><a href="#tab3">搜狐</a></li>
+            <li><a href="#tab4">凤凰</a></li>
+        </ul>
+
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="tab-content default-tab" id="tab1"> <!-- tab 网易 -->
+            <div class="notification information png_bg" id="infobox">
+                <div id="addInfo">
+                    请填写以下内容。
+                </div>
+            </div>
+
+            <form action="/newssupportNew" method="post">
+
+                <fieldset>
+                    <input type="hidden" name="task" id="task" value="304"/>
+                    <p>
+                        <label>任务名称</label>
+                        <input class="text-input medium-input datepicker" type="text" id="taskname" name="taskname" value="未命名网易新闻执行任务" /> 
+                    </p>
+
+                    <p>
+                        <label>任务地址</label>
+                        <input class="text-input large-input" type="text" id="url" name="url" />
+                    </p>
+                    <p>
+                        <label>发送间隔</label>              
+                        <select name="speed" class="small-input" id="speed">
+
+                            <option value="1">15秒～30秒</option>
+                            <option value="2">30秒～一分钟</option>
+
+                        </select> 
+                    </p>
+                    <p>
+                        <label>执行方式</label>              
+                        <select name="task_type" class="small-input" id="task_type">
+
+                            <option value="901">精确调度</option>
+                            <option value="902">分发广播</option>
+
+                        </select> 
+                    </p>
+                    <p>
+                        <label>支持数量</label>
+                        <input class="text-input small-input ui-state-error" type="text" id="sub_count" name="sub_count" />  <!-- Classes for input-notification: success, error, information, attention -->
+                        <br /><small>每次最大500次</small>
+                    </p>
+
+
+                </fieldset>
+            </form>
+            <div class="button" id="duSubmit">提交</div>
+        </div><!-- tab 网易 -->
+        <div class="tab-content" id="tab2"> <!-- tab 新浪 -->
+            新浪
+        </div><!-- tab 新浪 -->
+        <div class="tab-content" id="tab3"> <!-- tab 搜狐 -->
+            搜狐
+        </div><!-- tab 搜狐 -->
+        <div class="tab-content" id="tab4"> <!-- tab 凤凰 -->
+            凤凰
+        </div><!-- tab 凤凰 -->
+
+
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+<%- include ../../footer %>
