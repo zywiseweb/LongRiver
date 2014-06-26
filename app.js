@@ -11,9 +11,11 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;//认证策略
 var async = require('async');//流程控制
 
-var db = require('./system_modules/dao/dao');
 var init = require('./system_modules/dao/initdb');
 var role = require('./system_modules/role/role');
+var userManager = require('./system_modules/user/user');
+var taskManager = require('./system_modules/task/task');
+var util = require('./system_modules/util');
 
 //*************************************
 /**
@@ -26,14 +28,17 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(username, done) {
-    db.findUser({username: username}, function(err, user) {
+    userManager.findUser({username: username}, function(err, user) {
         done(err, user);
     });
 });
 
-//认证策略
+/**
+ * 用户认证
+ * @param {type} param
+ */
 passport.use(new LocalStrategy(function(username, password, done) {
-    db.findUser({'username': username}, function(err, user) {
+    userManager.findUser({'username': username}, function(err, user) {
         if (err) {
             return done(err);
         }
@@ -63,7 +68,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
 function ensureAuthenticated(req, res, next) {
     console.info("判断登陆");
     if (req.isAuthenticated()) {//判断登陆
-        if(req.path==='/'){//首页
+        if (req.path === '/') {//首页
             role.getHome(req.session.user.role.roleId, function(err, homeRoute) {
                 if (err) {
                     console.info(err.message);
@@ -73,32 +78,28 @@ function ensureAuthenticated(req, res, next) {
                 }
 
             });
-        }else{
-        role.authRole({"roleid": req.session.user.role.roleId, "route": req.path}, //判断权限
-        function(err, role) {
-            if (err) {
-                console.info("权限：鉴权错误");
-                return res.redirect('/err500');
-            }
-            if (role) {
-                console.info("权限：有权访问。");
-                req.session.role=role;
-                return next();
-            } else {
-                console.info("权限：无权访问。");
-                return res.redirect('/norole');
-            }
-        });
-    }
+        } else {
+            role.authRole({"roleid": req.session.user.role.roleId, "route": req.path}, //判断权限
+            function(err, role) {
+                if (err) {
+                    console.info("权限：鉴权错误");
+                    return res.redirect('/err500');
+                }
+                if (role) {
+                    console.info("权限：有权访问。");
+                    req.session.role = role;
+                    return next();
+                } else {
+                    console.info("权限：无权访问。");
+                    return res.redirect('/norole');
+                }
+            });
+        }
 
     } else {
         console.info("认证：需要登陆。");
         return res.redirect('/login');
     }
-
-
-
-    //   if
 
 }
 //*************************************
@@ -155,11 +156,16 @@ app.post('/login', function(req, res, next) {
             console.info("认证成功");
             req.session.user = user;
             //重定向到权限首页
-             return res.redirect('/');
-            
+            return res.redirect('/');
+
             //  return res.redirect('/home');
         });
     })(req, res, next);
+});
+
+app.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
 });
 
 app.get('/init',
@@ -183,32 +189,257 @@ app.post('/init',
 
 app.get('/person', ensureAuthenticated, function(req, res) {
     async.parallel([
-        function(callback){
-            role.getMenu(req.path,req.session.role,callback);
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
         }
+
     ]
-    ,function(err,results){
-        console.info(results[0].toString());
-        res.render('person/main', {user: req.session.user,menu:results[0]});
-    });
+            , function(err, results) {
+                console.info(results[0].toString());
+                res.render('person/main', {user: req.session.user, menu: results[0]});
+            });
 });
 //---------------------------
 app.get('/user', ensureAuthenticated, function(req, res) {
-    res.render('system/user', {user: req.session.user});
+    var page = req.query.p ? parseInt(req.query.p) : 1;
+    var query = req.query.n ? {name: req.query.n} : null;
+
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        },
+        function(callback) {
+            userManager.findPagination(
+                    {
+                        search: query,
+                        columns: 'id name username role.roleName department.departmentName',
+                        num: page,
+                        limit: 10
+                    }, callback);
+        }
+    ]
+            , function(err, results) {
+                if (err) {
+                    res.redirect('/err');
+                } else {
+                    res.render('system/user', {user: req.session.user, menu: results[0], users: results[1]});
+                }
+
+            });
+});
+
+
+app.get('/userAdd', ensureAuthenticated, function(req, res) {
+
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ]
+            , function(err, results) {
+                if (err) {
+                    res.redirect('/err');
+                } else {
+                    res.render('system/userAdd', {user: req.session.user, menu: results[0]});
+                }
+
+            });
+});
+
+
+
+
+app.get('/system', ensureAuthenticated, function(req, res) {
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ]
+            , function(err, results) {
+                res.render('system/user', {user: req.session.user, menu: results[0]});
+            });
 });
 
 app.get('/role', ensureAuthenticated, function(req, res) {
-    res.render('system/role', {user: req.session.user});
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ]
+            , function(err, results) {
+                res.render('system/role', {user: req.session.user, menu: results[0]});
+            });
+
 });
 
-app.get('/dapartment', ensureAuthenticated, function(req, res) {
-    res.render('system/dapartment', {user: req.session.user});
+app.get('/department', ensureAuthenticated, function(req, res) {
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ]
+            , function(err, results) {
+                res.render('system/department', {user: req.session.user, menu: results[0]});
+            });
+
 });
+
+app.get('/newscommmit', ensureAuthenticated, function(req, res) {
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ]
+            , function(err, results) {
+                res.render('spread/news/commit', {user: req.session.user, menu: results[0]});
+            });
+
+});
+
+app.get('/newssupport', ensureAuthenticated, function(req, res) {
+
+
+    var page = req.query.p ? parseInt(req.query.p) : 1;
+    var query = req.query.n ? {name: req.query.n} : null;
+
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        },
+        function(callback) {
+            taskManager.findPagination(
+                    {
+                        search: query,
+                        columns: 'task_id name task sub_count sub_schedule_count task_type task_status',
+                        num: page,
+                        limit: 10
+                    }, callback);
+        }
+    ]
+            , function(err, results) {
+                if (err) {
+                    res.redirect('/err');
+                } else {
+                    // console.info(results[1]);
+                    res.render('spread/news/support', {user: req.session.user, menu: results[0], task: results[1]});
+                }
+
+            });
+});
+
+app.get('/newssupportdetail', ensureAuthenticated, function(req, res) {
+    var id = req.query.id;
+    taskManager.findSubTask(id, function(err, resunlt) {
+        if (err) {
+            res.redirect('/err');
+        } else {
+            res.render('spread/news/supportDetail', {detail: resunlt});
+        }
+    });
+});
+
+app.get('/newssupportNew', ensureAuthenticated, function(req, res) {
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ], function(err, results) {
+        res.render('spread/news/supportNew', {user: req.session.user, menu: results[0]});
+    });
+
+});
+app.post('/newssupportNew', ensureAuthenticated, function(req, res) {
+    var speed = req.body.speed;
+    var count = req.body.sub_count;
+    var task = req.body.task;
+    var name = req.body.taskname;
+    var url = req.body.url;
+    var task_type = req.body.task_type;
+
+    var min=30;
+    var max =60;
+    if (speed === 1) {
+        
+        min = 15;
+        max = 30;
+    } else if (speed === 2) {
+        min = 30;
+        max = 60;
+    }
+    console.info(task + " " + name + " " + url + " " + speed + " " + count+ " "+ max + " "+min);
+    var newTask = {
+        task_id: new Date().getTime(),
+        task_type: task_type,
+        task: task,
+        name: name,
+        username: req.session.user.username,
+        user_displayname: req.session.user.name,
+        task_tag: {map: {url: url}},
+        schedule_min: min,
+        schedule_max: max,
+        need_schedule_times: 1,
+        sub_count: count,
+        sub_schedule_count: 0,
+        task_status: 0,
+        creat_time: util.getCurrentTime
+    };
+
+    console.info(newTask);
+
+    taskManager.saveTask(newTask, function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send('1');
+        }
+    });
+    /*
+     async.parallel([
+     function(callback) {
+     role.getMenu(req.path, req.session.role, callback);
+     }
+     ]
+     , function(err, results) {
+     res.render('spread/news/supportNew', {user: req.session.user, menu: results[0]});
+     });
+     */
+
+});
+
+
+//-- ----
+app.get('/sinasearch', ensureAuthenticated, function(req, res) {
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ]
+            , function(err, results) {
+                res.render('account/sina/search', {user: req.session.user, menu: results[0]});
+            });
+
+});
+
+app.get('/sinaloadin', ensureAuthenticated, function(req, res) {
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ]
+            , function(err, results) {
+                res.render('account/sina/loadin', {user: req.session.user, menu: results[0]});
+            });
+
+});
+
 
 
 //----------------------------
 app.get('/norole', function(req, res) {
     res.render('norole');
+});
+app.get('/err', function(req, res) {
+    res.render('err');
 });
 //404
 app.get('*', function(req, res) {
