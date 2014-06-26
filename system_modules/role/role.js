@@ -1,4 +1,3 @@
-var db = require('../dao/dao');
 var mongoose = require('../database/mongodb');
 
 var Schema = mongoose.Schema;
@@ -23,7 +22,7 @@ var roleManager = mongoose.model('Role', roleSchema);
  * @param {type} callback
  * @returns {undefined}
  */
-var findRole = function(where, callback) {
+exports.findRole = function(where, callback) {
     roleManager.findOne(where, callback);
 };
 /**
@@ -49,7 +48,7 @@ exports.saveRole = function(role, callback) {
 
 exports.authRole = function(roleParam, callback) {
     var roleRoute = roleParam.route;
-    findRole({"id": roleParam.roleid}, function(err, role) {
+    this.findRole({"id": roleParam.roleid}, function(err, role) {
         if (err) {
             return callback(err);
         }
@@ -86,7 +85,7 @@ function chickRole(route, access) {
     return false;
 }
 /**
- * 获取权限首页
+ * 获取权限首页，获得用户所在角色的默认首页。后继计划可以设置首页
  * @param {type} role
  * @param {type} callback
  * @returns {undefined}
@@ -95,7 +94,7 @@ exports.getHome = function(roleID, callback) {
     if (!roleID) {
         return  callback({message: 'roleid is null'}, null);
     }
-    findRole({"id": roleID}, function(err, role) {
+    this.findRole({"id": roleID}, function(err, role) {
         if (err)
             return callback({message: 'Get role err'}, null);
         if (role) {

@@ -26,19 +26,16 @@ var structure = [
                         name: '用户管理',
                         id: 111,
                         route: '/user',
-                        add:{
-                            name:'添加',
-                            route:'/useradd'
-                        },
-                        remove:{
-                            name:'删除',
-                            route:'/userDelete'
-                        },
-                        edit:{
-                            name:'编辑',
-                            route:'/userEdit'
-                        }
-                        
+                        sub: [{
+                                name: '添加',
+                                route: '/useradd'
+                            }, {
+                                name: '删除',
+                                route: '/userDelete'
+                            }, {
+                                name: '编辑',
+                                route: '/userEdit'
+                            }]
                     },
                     {
                         name: '用户权限',
@@ -61,9 +58,9 @@ var structure = [
         ]
     },
     {
-       name: '账号管理',
+        name: '账号管理',
         id: 3,
-        route: '/user',
+        route: '/sinasearch',
         sub: [
             {
                 name: '新浪账号',
@@ -71,11 +68,84 @@ var structure = [
                 route: '',
                 sub: [
                     {
-                        
+                        name: '账号查询',
+                        id: 311,
+                        route: '/sinasearch'
+                    },
+                    {
+                        name: '账号导入',
+                        id: 312,
+                        route: '/sinaloadin'
                     }
                 ]
             }
         ]
+    },
+    {
+        name: '引导系统',
+        id: 4,
+        route: '/newscommmit',
+        sub: [
+            {
+                name: '新闻引导',
+                id: 41,
+                route: '/newscommmit',
+                sub: [
+                    {
+                        name: '新闻评论',
+                        id: 411,
+                        route: '/newscommmit',
+                        sub: [
+                            {
+                                name: '详情',
+                                route: '/newscommmitdetail'
+                            }, {
+                                name: '删除',
+                                route: '/newscommmitdetele'
+                            }, {
+                                name: 'stop',
+                                route: '/newscommmitstop'
+                            }, {
+                                name: 'start',
+                                route: '/newscommmitstart'
+                            },{
+                            
+                                name: '新建',
+                                route: '/newscommmitNew'
+                            }
+                        ]
+
+                    },
+                    {
+                        name: '新闻支持',
+                        id: 412,
+                        route: '/newssupport',
+                        sub:[
+                            {
+                                name: '详情',
+                                route: '/newssupportdetail'
+                            }, {
+                                name: '删除',
+                                route: '/newssupportdetele'
+                            }, {
+                                name: 'stop',
+                                route: '/newssupportstop'
+                            }, {
+                                name: 'start',
+                                route: '/newssupportstart'
+                            }
+                        ]
+                        
+                    },{
+                        name: '新建支持任务',
+                        id: 413,
+                        route: '/newssupportNew'
+                    }
+
+                ]
+            }
+        ]
+
     }
 ];
 

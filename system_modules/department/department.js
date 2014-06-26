@@ -1,9 +1,7 @@
 
 var mongoose = require('../database/mongodb');
-//var bcrypt = require('bcrypt');
-//var SALT_WORK_FACTOR = 11;
-var Schema = mongoose.Schema;
 
+var Schema = mongoose.Schema;
 /**
  * 部门模型
  * @type Schema
@@ -13,9 +11,7 @@ var departmentSchema = new Schema({
     id: {type: Number, required: true, unique: true},
     sub: []
 });
-//****************定义实体控制*******************
-//var userManager = mongoose.model('User', userSchema);
-//var roleManager = mongoose.model('Role', roleSchema);
+
 var departmentManager = mongoose.model('Department', departmentSchema);
 
 
@@ -43,5 +39,4 @@ exports.saveDepartment = function(department, callback) {
     });
 
 };
-
 

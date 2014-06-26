@@ -115,7 +115,7 @@ exports.findPagination = function(params, callback) {
 
     console.info('q:' + q + ' col:' + col + ' pageNumber:' + pageNumber + ' skipFrom:' + skipFrom);
 
-    var query = userManager.find(q, col).sort('-create_date').skip(skipFrom).limit(resultsPerPage);
+    var query = userManager.find(q, col).sort('-createTime').skip(skipFrom).limit(resultsPerPage);
 
     query.exec(function(err, results) {
         if (err) {
@@ -125,6 +125,7 @@ exports.findPagination = function(params, callback) {
                 if (err) {
                     callback(err, null);
                 } else {
+                    console.info('--->'+results.toString());
                     var pageCount = Math.ceil(count / resultsPerPage);
                     callback(null, {'pageCount': pageCount, 'results': results, currentPage: pageNumber});
                 }
