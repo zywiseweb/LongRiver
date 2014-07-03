@@ -2,89 +2,94 @@
 
 <%- include ../body %>  
 <div class="content-box"><!-- Start Content Box -->
-				
-				<div class="content-box-header">
-					<h3>用户信息</h3>
-					<div class="clear"></div>
-				</div> <!-- End .content-box-header -->
-				<div class="content-box-content">
-				<table>
-							
-							<thead>
-								<tr>
-								   <th>名称</th>
-								   <th>账号</th>
-								   <th>权限</th>
-								   <th>部门</th>
-								</tr>
-								
-							</thead>
-						 
-							<tfoot>
-								<tr>
-									<td colspan="6">
-										<div class="pagination">
-											
-
-											<%  var currtentPage = users.currentPage ; %>
-												<% if( currtentPage>2  ){%>
-												<a href=<%= '/user?p=1'%> >&laquo; 首页</a>
-												<a href=<%= '/user?p=' + currentPage-1  %> >&laquo; 前一页</a>
-											<% } %>
-
-											<% for(var i = 3 ; i>0; i-- ){
-												if((currtentPage-i)>0){
-											%>
-													<a href="#" class="number" ><%= currtentPage-i %></a>
-											  <% }
-											} %>
-											<a href="#" class="number current"><%= currtentPage %></a>
-
-											
-											<% for(var i = 1 ; i<4; i++){
-												if(currtentPage+i< users.pageCount){
-											%>
-													<a href="#" class="number" ><%= currtentPage+i %></a>
-											     <% }
-											} %>
-											<% if( (users.pageCount - users.currentPage)>3){ %>
-												<a href=<%= '/user?p=' + users.currentPage+1 %> >下一页 &raquo;</a>
-												<a href=<%= '/user?p=' + users.pageCount %>  > 尾页 &raquo;</a>
-											<% } %>
-											
-
-										</div> <!-- End .pagination -->
-										<div class="clear"></div>
-									</td>
-								</tr>
-							</tfoot>
-							<tbody>
-								<tr>
-									<%  for(var i=0;i<users.results.length;i++){ %>
-        								
-        								<td><%= users.results[i].name %></td>
-        								<td><%= users.results[i].username %></td>
-        								<td><%= users.results[i].role.roleName %></td>
-        								<td><%= users.results[i].department.departmentName %></td>
-        								<td>
-										<!-- Icons -->
-											<a href="/userEdit?" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
-										 	<a href="/userdelete?" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
-										</td>
-									<% } %>
-									
-									
-								</tr>
-
-							</tbodu>
-						</table>
-				</div> <!-- End .content-box-content -->
-				
-			</div> <!-- End .content-box -->
+    <div class="content-box-header">
+        <h3>创建用户</h3>
 
 
-	
-					
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <form>
+            <fieldset>
+                <table style="width:100%;">
+                    <tr>
+                        <td>
+                            <label>用户名</label>
+                        </td>
+                        <td>
+                            <input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>姓名</label>
+                        </td>
+                        <td>
+                            <input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 
+                            <label>密码</label>
+                        </td>
+                        <td > 
+                            <input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
+                            <span class="input-notification success png_bg">Successful message</span>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td> 
+                            <label>确认密码</label>
+                        </td>
+                        <td > 
+                            <input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
+                            <span class="input-notification success png_bg">Successful message</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 
+                            <label>选择用户角色</label>
+                        </td>
+                        <td > 
+                            <select name="dropdown" class="small-input">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                                <option value="option4">Option 4</option>
+                            </select> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 
+                            <label>选择所属部门</label>
+                        </td>
+                        <td > 
+                            <select name="dropdown" class="small-input">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                                <option value="option4">Option 4</option>
+                            </select> 
+                        </td>
+                    </tr>
+                    <tr>
+                       
+                           <td>
+                               <div class="button" id="sohu_doSubmit">提交</div>
+                           </td> 
+                           <td></td> 
+                    </tr>
+                    
+                </table>
+                         
+            </fieldset>
+
+        </form>
 
 
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
 <%- include ../footer %>

@@ -26,9 +26,9 @@
 
                     <th>任务数量</th>
                     <th>执行数量</th>
-                    <th>执行方式</th>
+                    <th>创建时间</th>
                     <th>状态</th>
-                    <th>操作</th>
+                    
 
                 </tr>
 
@@ -70,19 +70,15 @@
                     <td><%= task.results[i].name %></td>
                     <%  if(task.results[i].task===304){ %>
                     <td>网易</td>
-                    <%}else{%>
-                    <td>未知</td>
+                    <%}else if(task.results[i].task===404){%>
+                    <td>搜狐</td>
                     <%}%>
                     <td><%= task.results[i].sub_count %></td>
                     <td><a class="button" href="/newssupportdetail?id=<%= task.results[i].task_id %>" target="_blank"><%= task.results[i].sub_schedule_count %></a></td>
 
-                    <%  if(task.results[i].task_type===901){ %>
-                    <td>精确调度</td>
-                    <%}else if(task.results[i].task_type===902){%>
-                    <td>分发广播</td>
-                    <%}else{%>
-                    <td>未知</td>
-                    <%}%>
+                  
+                    <td><%= task.results[i].create_time %></td>
+                    
 
                     <%  if(task.results[i].task_status===0){ %>
                     <td>等待</td>
@@ -100,12 +96,14 @@
                     <td>未知</td>
                     <%}%>
 
-                    
+                    <% if(false){%> 
+                    <!-- 权限判断 -->
                     <td>
                         <!-- Icons -->
 
                         <a href="#" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
                     </td>
+                    <% } %>
                 </tr>
                 <% } %>
 

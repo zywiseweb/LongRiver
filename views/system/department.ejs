@@ -1,3 +1,177 @@
 <%- include ../header %>
+<link rel="stylesheet" href="stylesheets/themes/default/style.min.css" />
+<style>
+    #department_tree {
+        padding: 10px 0; 
+    }
+    #search{
+        box-shadow:inset 0 0 4px #eee;
+        width:120px; 
+        margin:0;
+        padding:6px 12px; 
+        border-radius:4px;
+        border:1px solid silver;
+        font-size:1.1em;
+    }
+</style>
+<script src="javascripts/jstree.min.js"></script>
+<script>
+    var info
+    function showinfo(text) {
+        info.text(text);
+    }
+    ;
+    $(function() {
+
+        info = $("#info");
+
+        var data = <%- JSON.stringify(department) %> ;
+                data.type = 'root';
+
+        $('#department_tree').jstree(
+                {"core": {
+                        "animation": 0,
+                        "check_callback": true,
+                        "themes": {"stripes": true, "variant": "large"},
+                        'data': data
+                    },
+                    "types": {
+                        "#": {"max_children": 1, "max_depth": 4, "valid_children": ["root"]},
+                        "root": {"icon": "images/home.png", "valid_children": ["default"]},
+                        "default": {"icon": "images/bag.png", "valid_children": ["default"]}
+                    },
+                    "plugins": ["dnd", "search", "state", "types", "unique", "wholerow"]
+
+                });
+
+        var to = false;
+        $('#search').keyup(function() {
+            if (to) {
+                clearTimeout(to);
+            }
+            to = setTimeout(function() {
+                var v = $('#search').val();
+                $('#department_tree').jstree(true).search(v);
+            }, 250);
+        });
+
+    });
+    function department_create() {
+        var ref = $('#department_tree').jstree(true),
+                sel = ref.get_selected();
+        if (!sel.length) {
+            return false;
+        }
+        sel = sel[0];
+        sel = ref.create_node(sel, {type: "default"});
+        if (sel) {
+            ref.edit(sel);
+        }
+        showinfo("已修改，请点击'保存'按钮");
+
+    }
+    ;
+    function department_rename() {
+        var ref = $('#department_tree').jstree(true),
+                sel = ref.get_selected();
+        if (!sel.length) {
+            return false;
+        }
+        sel = sel[0];
+        if (sel in ['1', '2', '3', '100']) {
+            showinfo("基础结构不能修改。");
+            return;
+        }
+        ref.edit(sel);
+        showinfo("已修改，请点击'保存'按钮");
+    }
+
+    function department_delete() {
+        var ref = $('#department_tree').jstree(true),
+                sel = ref.get_selected();
+        if (!sel.length) {
+            return false;
+        }
+        if (sel[0] in ['1', '2', '3', '100']) {
+            showinfo("基础结构不能修改。");
+
+            return;
+        }
+        ref.delete_node(sel);
+        showinfo("已修改，请点击'保存'按钮");
+    }
+    ;
+    function department_save() {
+        var ref = $('#department_tree').jstree(true);
+        var json = ref.get_json(null, {
+            no_state: false,
+            no_data: true,
+            flat: false
+        });
+          showinfo("请稍后,正在保存....");
+        $.ajax({
+            type: 'POST',
+            url: "/departmentSave",
+            data: {department: json},
+            dataType: "json",
+            success: function(text) {
+                console.info(text);
+                if (text ===200) {
+                    showinfo("保存成功。");
+                } else {
+                    showinfo(text);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus) {
+                showinfo(textStatus);
+            }
+        });
+
+    }
+    ;
+</script>
+
 <%- include ../body %>  
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>用户信息</h3>
+        <ul class="content-box-tabs">
+
+            <li></li> <!-- href must be unique and match the id of target div -->
+
+        </ul>
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="notification information png_bg" id="infobox">
+            <div id="info">
+                修改后请点击保存。
+            </div>
+        </div>
+        <div class="row">
+            <div >
+                <button type="button" class="button" onclick="department_create();">新建子单位</button>
+                <button type="button" class="button" onclick="department_rename();">重命名</button>
+                <button type="button" class="button" onclick="department_delete();">删除</button>
+                <input type="text" class="text-input" id="search" placeholder="搜索">
+                <button type="button" class="button" onclick="department_save();">保存</button>
+
+
+            </div>
+
+        </div>
+
+        <div id="department_tree"  >
+
+
+
+
+        </div>
+    </div> <!-- End .content-box-content -->
+
+
+</div> <!-- End .content-box -->
 <%- include ../footer %>

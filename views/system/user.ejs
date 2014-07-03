@@ -1,230 +1,230 @@
 <%- include ../header %>
-  <script>
-  $(function() {
-    var name = $( "#name" ),
-      email = $( "#email" ),
-      password = $( "#password" ),
-      allFields = $( [] ).add( name ).add( email ).add( password ),
-      tips = $( ".validateTips" );
- 
-    function updateTips( t ) {
-      tips
-        .text( t )
-        .addClass( "ui-state-highlight" );
-      setTimeout(function() {
-        tips.removeClass( "ui-state-highlight", 1500 );
-      }, 500 );
-    }
- 
-    function checkLength( o, n, min, max ) {
-      if ( o.val().length > max || o.val().length < min ) {
-        o.addClass( "ui-state-error" );
-        updateTips( "Length of " + n + " must be between " +
-          min + " and " + max + "." );
-        return false;
-      } else {
-        return true;
-      }
-    }
- 
-    function checkRegexp( o, regexp, n ) {
-      if ( !( regexp.test( o.val() ) ) ) {
-        o.addClass( "ui-state-error" );
-        updateTips( n );
-        return false;
-      } else {
-        return true;
-      }
-    }
- 
-    $( "#dialog-form" ).dialog({
-      autoOpen: false,
-      height: 500,
-      width: 600,
-      modal: true,
-      buttons: {
-        "创建": function() {
-        },
-        "放弃": function() {
-          $( this ).dialog( "close" );
+<script>
+    $(function() {
+        var name = $("#name"),
+                email = $("#email"),
+                password = $("#password"),
+                allFields = $([]).add(name).add(email).add(password),
+                tips = $(".validateTips");
+
+        function updateTips(t) {
+            tips
+                    .text(t)
+                    .addClass("ui-state-highlight");
+            setTimeout(function() {
+                tips.removeClass("ui-state-highlight", 1500);
+            }, 500);
         }
-      },
-      close: function() {
-        allFields.val( "" ).removeClass( "ui-state-error" );
-      }
+
+        function checkLength(o, n, min, max) {
+            if (o.val().length > max || o.val().length < min) {
+                o.addClass("ui-state-error");
+                updateTips("Length of " + n + " must be between " +
+                        min + " and " + max + ".");
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkRegexp(o, regexp, n) {
+            if (!(regexp.test(o.val()))) {
+                o.addClass("ui-state-error");
+                updateTips(n);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        $("#dialog-form").dialog({
+            autoOpen: false,
+            height: 500,
+            width: 600,
+            modal: true,
+            buttons: {
+                "创建": function() {
+                },
+                "放弃": function() {
+                    $(this).dialog("close");
+                }
+            },
+            close: function() {
+                allFields.val("").removeClass("ui-state-error");
+            }
+        });
+
+        $("#create-user")
+                .click(function() {
+                    $("#dialog-form").dialog("open");
+                });
     });
- 
-    $( "#create-user" )
-      .click(function() {
-        $( "#dialog-form" ).dialog( "open" );
-      });
-  });
-  </script>
+</script>
 
 <%- include ../body %>  
 <div class="content-box"><!-- Start Content Box -->
-				
-				<div class="content-box-header">
-					<h3>用户信息</h3>
-					<ul class="content-box-tabs">
-						
-						<li><a href="#" class="button" id="create-user" >添加用户</a></li> <!-- href must be unique and match the id of target div -->
-						
-					</ul>
-					
 
-					<div class="clear"></div>
-				</div> <!-- End .content-box-header -->
-				<div class="content-box-content">
-				<table>
-							
-							<thead>
-								<tr>
-								   <th>名称</th>
-								   <th>账号</th>
-								   <th>权限</th>
-								   <th>部门</th>
+    <div class="content-box-header">
+        <h3>用户信息</h3>
+        <ul class="content-box-tabs">
 
-								</tr>
-								
-							</thead>
-						 
-							<tfoot>
-								<tr>
-									<td colspan="6">
-										
-										<div class="pagination">
-											
+            <li><a href="#" class="button" id="create-user" >添加用户</a></li> <!-- href must be unique and match the id of target div -->
 
-											<%  var currtentPage = users.currentPage ; %>
-												<% if( currtentPage>2  ){%>
-												<a href=<%= '/user?p=1'%> >&laquo; 首页</a>
-												<a href=<%= '/user?p=' + currentPage-1  %> >&laquo; 前一页</a>
-											<% } %>
+        </ul>
 
-											<% for(var i = 3 ; i>0; i-- ){
-												if((currtentPage-i)>0){
-											%>
-													<a href="#" class="number" ><%= currtentPage-i %></a>
-											  <% }
-											} %>
-											<a href="#" class="number current"><%= currtentPage %></a>
 
-											
-											<% for(var i = 1 ; i<4; i++){
-												if(currtentPage+i< users.pageCount){
-											%>
-													<a href="#" class="number" ><%= currtentPage+i %></a>
-											     <% }
-											} %>
-											<% if( (users.pageCount - users.currentPage)>3){ %>
-												<a href=<%= '/user?p=' + users.currentPage+1 %> >下一页 &raquo;</a>
-												<a href=<%= '/user?p=' + users.pageCount %>  > 尾页 &raquo;</a>
-											<% } %>
-											
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <table>
 
-										</div> <!-- End .pagination -->
-										<div class="clear"></div>
-									</td>
-								</tr>
-							</tfoot>
-							<tbody>
-								
-									<%  for(var i=0;i<users.results.length;i++){ %>
-        								<tr>
-        								<td><%= users.results[i].name %></td>
-        								<td><%= users.results[i].username %></td>
-        								<td><%= users.results[i].role.roleName %></td>
-        								<td><%= users.results[i].department.departmentName %></td>
-        								<td>
-										<!-- Icons -->
-											<a href="/userEdit?" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
-										 	<a href="/userdelete?" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
-										</td></tr>
-									<% } %>
-									
-									
-								
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>账号</th>
+                    <th>权限</th>
+                    <th>部门</th>
 
-							</tbodu>
-						</table>
-				</div> <!-- End .content-box-content -->
-				
-			</div> <!-- End .content-box -->
+                </tr>
+
+            </thead>
+
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+
+                        <div class="pagination">
+
+
+                            <%  var currtentPage = users.currentPage ; %>
+                            <% if( currtentPage>2  ){%>
+                            <a href=<%= '/user?p=1'%> >&laquo; 首页</a>
+                            <a href=<%= '/user?p=' + currentPage-1  %> >&laquo; 前一页</a>
+                            <% } %>
+
+                            <% for(var i = 3 ; i>0; i-- ){
+                            if((currtentPage-i)>0){
+                            %>
+                            <a href="#" class="number" ><%= currtentPage-i %></a>
+                            <% }
+                            } %>
+                            <a href="#" class="number current"><%= currtentPage %></a>
+
+
+                            <% for(var i = 1 ; i<4; i++){
+                            if(currtentPage+i< users.pageCount){
+                            %>
+                            <a href="#" class="number" ><%= currtentPage+i %></a>
+                            <% }
+                            } %>
+                            <% if( (users.pageCount - users.currentPage)>3){ %>
+                            <a href=<%= '/user?p=' + users.currentPage+1 %> >下一页 &raquo;</a>
+                            <a href=<%= '/user?p=' + users.pageCount %>  > 尾页 &raquo;</a>
+                            <% } %>
+
+
+                        </div> <!-- End .pagination -->
+                        <div class="clear"></div>
+                    </td>
+                </tr>
+            </tfoot>
+            <tbody>
+
+                <%  for(var i=0;i<users.results.length;i++){ %>
+                <tr>
+                    <td><%= users.results[i].name %></td>
+                    <td><%= users.results[i].username %></td>
+                    <td><%= users.results[i].role.name %></td>
+                    <td><%= users.results[i].department.text %></td>
+                    <td>
+                        <!-- Icons -->
+                        <a href="/userEdit?" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
+                        <a href="/userdelete?" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
+                    </td></tr>
+                <% } %>
+
+
+
+
+                </tbodu>
+        </table>
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
 <div id="dialog-form" title="新建用户"> 
-  <form>
-  <fieldset>
-  	<table style="width:100%;">
-  		<tr>
-  			<td>
-  				<label>用户名</label>
-  			</td>
-  			<td>
-  				<input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
-  			</td>
-  		</tr>
-  		<tr>
-  			<td>
-  				<label>姓名</label>
-  			</td>
-  			<td>
-  				<input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
-  			</td>
-  		</tr>
-  		<tr>
-  			<td> 
-  				<label>密码</label>
-  			</td>
-  			<td > 
-  				<input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
-  				<span class="input-notification success png_bg">Successful message</span>
-  			</td>
+    <form>
+        <fieldset>
+            <table style="width:100%;">
+                <tr>
+                    <td>
+                        <label>用户名</label>
+                    </td>
+                    <td>
+                        <input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>姓名</label>
+                    </td>
+                    <td>
+                        <input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td> 
+                        <label>密码</label>
+                    </td>
+                    <td > 
+                        <input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
+                        <span class="input-notification success png_bg">Successful message</span>
+                    </td>
 
-  		</tr>
-  		<tr>
-  			<td> 
-  				<label>确认密码</label>
-  			</td>
-  			<td > 
-  				<input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
-  				<span class="input-notification success png_bg">Successful message</span>
-  			</td>
-  		</tr>
-  		<tr>
-  			<td> 
-  				<label>选择用户角色</label>
-  			</td>
-  			<td > 
-  				<select name="dropdown" class="small-input">
-										<option value="option1">Option 1</option>
-										<option value="option2">Option 2</option>
-										<option value="option3">Option 3</option>
-										<option value="option4">Option 4</option>
-									</select> 
-  			</td>
-  		</tr>
-  		<tr>
-  			<td> 
-  				<label>选择所属部门</label>
-  			</td>
-  			<td > 
-  				<select name="dropdown" class="small-input">
-										<option value="option1">Option 1</option>
-										<option value="option2">Option 2</option>
-										<option value="option3">Option 3</option>
-										<option value="option4">Option 4</option>
-									</select> 
-  			</td>
-  		</tr>
-  	</table>
+                </tr>
+                <tr>
+                    <td> 
+                        <label>确认密码</label>
+                    </td>
+                    <td > 
+                        <input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
+                        <span class="input-notification success png_bg">Successful message</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td> 
+                        <label>选择用户角色</label>
+                    </td>
+                    <td > 
+                        <select name="dropdown" class="small-input">
+                            <option value="option1">Option 1</option>
+                            <option value="option2">Option 2</option>
+                            <option value="option3">Option 3</option>
+                            <option value="option4">Option 4</option>
+                        </select> 
+                    </td>
+                </tr>
+                <tr>
+                    <td> 
+                        <label>选择所属部门</label>
+                    </td>
+                    <td > 
+                        <select name="dropdown" class="small-input">
+                            <option value="option1">Option 1</option>
+                            <option value="option2">Option 2</option>
+                            <option value="option3">Option 3</option>
+                            <option value="option4">Option 4</option>
+                        </select> 
+                    </td>
+                </tr>
+            </table>
 
-  </fieldset>
-  </form>
+        </fieldset>
+    </form>
 </div>
 
 
-	
-					
+
+
 
 
 <%- include ../footer %>

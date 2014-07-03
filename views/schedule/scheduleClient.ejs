@@ -1,0 +1,61 @@
+<%- include ../header %>
+
+<%- include ../body %>  
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>在线执行端</h3>
+        <ul class="content-box-tabs">
+
+            <li><a href="/scheduleClient" class="button"  >刷新</a></li> <!-- href must be unique and match the id of target div -->
+
+        </ul>
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <table>
+
+            <thead>
+                <tr>
+                     <th>编号</th>
+                    <th>地址</th>
+                    <th>创建时间</th>
+                    <th>最后读取时间</th>
+                    <th>最后写入时间</th>
+
+                </tr>
+
+            </thead>
+
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+
+                        共有<%= clients.length%>个在线执行端
+                        <div class="clear"></div>
+                    </td>
+                </tr>
+            </tfoot>
+            <tbody>
+
+                <%  for(var i=0;i < clients.length;i++){ %>
+                <tr>
+                    <td><%= (i+1) %></td>
+                    <td><%= clients[i].ip %></td>
+                    <td><%= clients[i].createTime %></td>
+                    <td><%= clients[i].lastReadTime %></td>
+                    <td><%= clients[i].lastWriteTime %></td>
+                    </tr>
+                <% } %>
+
+
+
+
+                </tbodu>
+        </table>
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+<%- include ../footer %>
