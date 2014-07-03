@@ -16,14 +16,14 @@ var userSchema = new Schema({
     password: {type: String, required: true}, //密码
     name: {type: String, required: true}, //显示名称
     role: {//角色,
-        roleId: {type: Number, required: true, default: 0}, //默认：0 游客权限，1.超级管理员 所有权限
-        roleName: {type: String, required: true, default: '游客'}//
+        id: {type: Number, required: true, default: 0}, //默认：0 游客权限，1.超级管理员 所有权限
+        name: {type: String, required: true, default: '游客'}//
 
     },
     createTime: {type: Date, default: Date.now}, //创建时间
     department: {
-        departmentId: {type: Number, required: true, default: 0},
-        departmentName: {type: String, required: true, default: '旅游团'}
+        id: {type: Number, required: true, default: 3},
+        text: {type: String, required: true, default: '旅游团'}
     }
 
 });

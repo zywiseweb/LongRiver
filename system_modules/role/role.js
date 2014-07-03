@@ -9,10 +9,12 @@ var Schema = mongoose.Schema;
 var roleSchema = new Schema({
     id: {type: Number, required: true, unique: true},
     name: {type: String, required: true, unique: true}, //用户名
+    createUser: {type: String},
     createTime: {type: Date, default: Date.now}, //创建时间
     homeRoute: {type: String}, //首页路由
     access: {}//角色权限,方具体的权限内容
 });
+
 
 var roleManager = mongoose.model('Role', roleSchema);
 
@@ -48,7 +50,7 @@ exports.saveRole = function(role, callback) {
 
 exports.authRole = function(roleParam, callback) {
     var roleRoute = roleParam.route;
-    this.findRole({"id": roleParam.roleid}, function(err, role) {
+    this.findRole({"id": roleParam.id}, function(err, role) {
         if (err) {
             return callback(err);
         }
@@ -219,4 +221,37 @@ exports.getMenu = function(route, role, callback) {
         menu.systems.push(system);
     }
     callback(null, menu);
+};
+
+
+exports.findPagination = function(params, callback) {
+    var q = params.search || {};//查询调价
+    var col = params.columns;//字段
+
+    var pageNumber = params.num || 1;//页数
+    var resultsPerPage = params.limit || 10;//每页行数
+
+    var skipFrom = (pageNumber * resultsPerPage) - resultsPerPage;//其实也
+
+    console.info('q:' + q + ' col:' + col + ' pageNumber:' + pageNumber + ' skipFrom:' + skipFrom);
+
+    var query = roleManager.find(q, col).sort('-createTime').skip(skipFrom).limit(resultsPerPage);
+
+    query.exec(function(err, results) {
+        if (err) {
+            callback(err, null);
+        } else {
+            roleManager.count(q, function(err, count) {
+                if (err) {
+                    callback(err, null);
+                } else {
+                    console.info('--->'+results.toString());
+                    var pageCount = Math.ceil(count / resultsPerPage);
+                    callback(null, {'pageCount': pageCount, 'results': results, currentPage: pageNumber});
+                }
+            });
+        }
+    });
+
+
 };

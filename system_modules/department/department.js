@@ -7,9 +7,9 @@ var Schema = mongoose.Schema;
  * @type Schema
  */
 var departmentSchema = new Schema({
-    name: {type: String, required: true, default: '未命名部门'},
-    id: {type: Number, required: true, unique: true},
-    sub: []
+    id: {type: String, required: false},
+    text: {type: String, required: true, default: '未命名部门'},
+    children: []
 });
 
 var departmentManager = mongoose.model('Department', departmentSchema);
@@ -27,7 +27,6 @@ exports.findDepartment = function(where, callback) {
 
 exports.saveDepartment = function(department, callback) {
     var newdepartment = new departmentManager(department);
-
     newdepartment.save(function(err) {
         if (err) {
             callback(err, '保存部门数据错误');
@@ -39,4 +38,37 @@ exports.saveDepartment = function(department, callback) {
     });
 
 };
+
+exports.updateDepartment = function(department, callback) {
+    var root = getdepartment(department[0]);
+    departmentManager.update({id: '100'}, {$set: {children: root.children}}, function(err) {
+        if (err) {
+            callback(err, '保存部门数据错误');
+        } else {
+            callback(null);
+        }
+    });
+
+};
+
+
+function getdepartment(object) {
+    var d = {
+        id: object.id,
+        text: object.text,
+        children: []
+    };
+    if (object.children) {
+
+        if (object.children.length > 0) {
+            for (var i = 0; i < object.children.length; i++) {
+                d.children.push(getdepartment(object.children[i]));
+
+            }
+        }
+    }
+    return d;
+}
+
+
 

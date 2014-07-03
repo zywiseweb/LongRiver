@@ -43,19 +43,20 @@ function initAdmin(callback) {
             console.info('添加超级管理员');
             //初始化数据
             var newUser = {
-                username: 'admin',//登陆名
-                password: 'admin',//密码
-                name: '超级管理员',//用户名
-                homeRoute:'/user',
+                username: 'admin', //登陆名
+                password: 'admin', //密码
+                name: '超级管理员', //用户名
+                homeRoute: '/person',
                 role: {
-                    roleId: 1,
-                    roleName: '超级管理员'
+                    id: 1,
+                    name: '超级管理员'
                 },
                 department: {
-                    departmentId: 1,
-                    departmentName: '系统管理员'
+                    id: 1,
+                    text: '系统管理'
                 }
             };
+            console.info(newUser);
             userManager.saveUser(newUser, callback);
         } else {
             callback(null, '超级管理员用户已经存在');
@@ -77,11 +78,12 @@ function inirRole(callback) {
         if (!role) {
             console.info('添加超级管理员权限');
             var adminRole = {
-                id: 1,//权限ID
-                name: '超级管理员',//权限名称
-                homeRoute:'/user',//权限默认首页
+                id: 1, //权限ID
+                name: '超级管理员', //权限名称
+                homeRoute: '/person', //权限默认首页
                 access: structure //认证结构
             };
+            console.info(adminRole);
             roleManager.saveRole(adminRole, callback);
         } else {
             callback(null, '超级管理员权限已经存在');
@@ -100,6 +102,7 @@ function initDepartment(callback) {
     console.info('init admin department.');
     callback(null, "ok");
 
+
     departmentManager.findDepartment({'id': 0}, function(err, role) {
         if (err) {
             callback(err, '部门查询操作出现错误');
@@ -107,17 +110,24 @@ function initDepartment(callback) {
         if (!role) {
             console.info('添加部门信息');
             var department = {
-                id: 0,
-                name: '系统',
-                sub: [
+                id:100,
+                text: '系统部门',
+                'children': [
                     {
                         id: 1,
-                        name: '系统管理员',
-                        sub: []
+                        text: '系统管理'
+                    }, {
+                        id: 2,
+                        text: '系统用户'
 
+                    }, {
+                        id: 3,
+                        text: '试用用户'
+                        
                     }
                 ]
             };
+            console.info(department);
             departmentManager.saveDepartment(department, callback);
         } else {
             callback(null, '部门信息已经存在');
