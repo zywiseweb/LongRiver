@@ -3,18 +3,13 @@
 <%- include ../body %>  
 <div class="content-box"><!-- Start Content Box -->
     <div class="content-box-header">
-        <h3>创建用户</h3>
+        <h3>修改用户</h3>
 
 
 
         <div class="clear"></div>
     </div> <!-- End .content-box-header -->
     <div class="content-box-content">
-         <div class="notification information png_bg" id="infobox">
-            <div id="info">
-                输入权限名，选择此权限可进行的操作，然的后点击“保存”。
-            </div>
-        </div>
         <form>
             <fieldset>
                 <table style="width:100%;">
@@ -23,7 +18,7 @@
                             <label>用户名</label>
                         </td>
                         <td>
-                            <input class="text-input medium-input" type="text" id="username" name="username-input" /> 
+                            <input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
                         </td>
                     </tr>
                     <tr>
@@ -31,7 +26,7 @@
                             <label>姓名</label>
                         </td>
                         <td>
-                            <input class="text-input medium-input" type="text" id="name" name="username-input" /> 
+                            <input class="text-input medium-input" type="text" id="username-input" name="username-input" /> 
                         </td>
                     </tr>
                     <tr>
@@ -39,7 +34,8 @@
                             <label>密码</label>
                         </td>
                         <td > 
-                            <input class="text-input medium-input" type="password" id="password" name="username-input" /> 
+                            <input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
+                            <span class="input-notification success png_bg">Successful message</span>
                         </td>
 
                     </tr>
@@ -48,7 +44,8 @@
                             <label>确认密码</label>
                         </td>
                         <td > 
-                            <input class="text-input medium-input" type="password" id="re_password" name="username-input" /> 
+                            <input class="text-input medium-input" type="password" id="username-input" name="username-input" /> 
+                            <span class="input-notification success png_bg">Successful message</span>
                         </td>
                     </tr>
                     <tr>
@@ -56,13 +53,11 @@
                             <label>选择用户角色</label>
                         </td>
                         <td > 
-
-                            <select name="role" class="small-input" id="role">
-                                <% for(var i=0;i<roleList.length;i++){%>
-                                    <option value="<%= roleList[i].id%>" > <%=roleList[i].text %></option>
-                                    <% }%>
-
-
+                            <select name="dropdown" class="small-input">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                                <option value="option4">Option 4</option>
                             </select> 
                         </td>
                     </tr>
@@ -71,25 +66,24 @@
                             <label>选择所属部门</label>
                         </td>
                         <td > 
-                            <select name="department" class="small-input" id="department">
-                                <% for(var i=0;i<departmentList.length;i++){%>
-                                    <option value="<%= departmentList[i].id%>" > <%=departmentList[i].text %></option>
-                                    <% }%>
-
-
+                            <select name="dropdown" class="small-input">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                                <option value="option4">Option 4</option>
                             </select> 
                         </td>
                     </tr>
                     <tr>
-
-                        <td>
-                            <div class="button" id="sohu_doSubmit" inclick="">提交</div>
-                        </td> 
-                        <td></td> 
+                       
+                           <td>
+                               <div class="button" id="sohu_doSubmit">提交</div>
+                           </td> 
+                           <td></td> 
                     </tr>
-
+                    
                 </table>
-
+                         
             </fieldset>
 
         </form>

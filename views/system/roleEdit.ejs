@@ -1,0 +1,137 @@
+<%- include ../header %>
+<link rel="stylesheet" href="stylesheets/themes/default/style.min.css" />
+<style>
+    #department_tree {
+        padding: 10px 0; 
+    }
+    #search{
+        box-shadow:inset 0 0 4px #eee;
+        width:120px; 
+        margin:0;
+        padding:6px 12px; 
+        border-radius:4px;
+        border:1px solid silver;
+        font-size:1.1em;
+    }
+</style>
+<script src="javascripts/jstree.min.js"></script>
+
+<script>
+
+    
+            $(function() {
+                $('#role_tree').jstree(
+                        {"core": {
+                                "animation": 0,
+                                "check_callback": true,
+                                "themes": {"stripes": true, "variant": "large"},
+                                'data': <%- JSON.stringify(access) %> 
+                            },
+                            "types": {
+                                "default": {"icon": "images/issue.png", "valid_children": ["default"]}
+                            },
+                            "plugins": ["search", "state", "types", "wholerow", "checkbox"]
+
+                        });
+                        $('#role_tree').jstree(true).clear_state();
+                         setTimeout(function() {
+                             $('#role_tree').jstree(true).deselect_all();
+                              $('#role_tree').jstree(true).open_all();
+                          $('#role_tree').jstree(true).select_node(<%- JSON.stringify(selected) %>);
+                    }, 400);
+            });
+    function role_save() {
+        var role_name = $("#role-name").val();
+        if (role_name.length < 1) {
+            showinfo("名字不能为何空");
+            return;
+        }
+        var ref = $('#role_tree').jstree(true);
+        var json = ref.get_json(null, {
+            no_state: false,
+            no_data: true,
+            flat: true
+        });
+        var ids = [];
+        for (var i = 0; i < json.length; i++) {
+            if (json[i].state.selected) {
+                ids.push(json[i].id);
+            }
+        }
+        console.info ('['+ids.toString()+']');
+        showinfo("请稍后,正在保存....");
+        $('#save-role').hide();
+        $.ajax({
+            type: 'POST',
+            url: "/roleEdit",
+            data: {
+                id:<%= role.id %>,
+                name: role_name,
+                access:ids
+            },
+            dataType: "json",
+            success: function(text) {
+                console.info(text);
+                if (text === 200) {
+                    showinfo("保存成功。");
+                    setTimeout(function() {
+                        location.href = "/role";
+                    }, 500);
+                } else {
+                    showinfo(text);
+                    $('#save-role').show();
+                }
+               
+            },
+            error: function(XMLHttpRequest, textStatus) {
+                showinfo(textStatus);
+            }
+        });
+
+
+    }
+    function showinfo(text) {
+        $("#info").text(text);
+    }
+</script>
+<%- include ../body %>  
+
+<div class="content-box"><!-- Start Content Box -->
+    <div class="content-box-header">
+        <h3>权限编辑</h3>
+        <ul class="content-box-tabs">
+            <li><div class="button" id="save-role"  onclick="role_save();">保存</div></li>
+        </ul>
+
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="notification information png_bg" id="infobox">
+            <div id="info">
+                输入权限名，选择此权限可进行的操作，然的后点击“保存”。
+            </div>
+        </div>
+        <form action="#" method="post">					
+            <fieldset>
+                <p>
+                    <label>新权限名称</label>
+                    <input class="text-input medium-input" type="text" id="role-name" name=“role-name” placeholder="请在此输入新权限名称" value="<%= role.text%>"/>
+                </p>
+
+
+                <label>设置权限</label>
+                <div id="role_tree"  >
+
+
+
+
+                </div>
+            </fieldset>
+        </form>
+
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+<%- include ../footer %>

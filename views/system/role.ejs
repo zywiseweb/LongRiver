@@ -1,4 +1,5 @@
 <%- include ../header %>
+
 <%- include ../body %>  
 <div class="content-box"><!-- Start Content Box -->
 
@@ -6,31 +7,24 @@
         <h3>用户信息</h3>
         <ul class="content-box-tabs">
 
-            <li><a href="#" class="button" id="create-role" >添加权限</a></li> <!-- href must be unique and match the id of target div -->
+            <li><a  class="button" href="/roleAdd" >添加权限</a></li> <!-- href must be unique and match the id of target div -->
         </ul>
         <div class="clear"></div>
     </div> <!-- End .content-box-header -->
     <div class="content-box-content">
         <table>
-
             <thead>
                 <tr>
                     <th>名称</th>
                     <th>创建时间</th>
                     <th>创建用户</th>
                     <th>操作</th>
-
                 </tr>
-
             </thead>
-
             <tfoot>
                 <tr>
                     <td colspan="6">
-
                         <div class="pagination">
-
-
                             <%  var currtentPage = role.currentPage ; %>
                             <% if( currtentPage>2  ){%>
                             <a href=<%= '/role?p=1'%> >&laquo; 首页</a>
@@ -67,14 +61,14 @@
 
                 <%  for(var i=0;i<role.results.length;i++){ %>
                 <tr>
-                    <td><%= role.results[i].name %></td>
+                    <td><%= role.results[i].text %></td>
                     <td><%= role.results[i].createTime %></td>
-                     <td><%= role.results[i].createUser %></td>
-                    
+                    <td><%= role.results[i].createUser %></td>
+
                     <td>
                         <!-- Icons -->
-                        <a href="/userEdit?" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
-                        <a href="/userdelete?" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
+                        <a href="/roleEdit?id=<%=role.results[i].id %>" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
+                        <a href="/roleDelete?id=<%=role.results[i].id %>" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
                     </td></tr>
                 <% } %>
 
@@ -83,5 +77,7 @@
 
                 </tbodu>
         </table>
-    </div> <!-- End .content-box-content -->
+    </div>
+</div> <!-- End .content-box-content -->
+
 <%- include ../footer %>

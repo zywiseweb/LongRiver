@@ -3,7 +3,8 @@
   
 	<body><div id="body-wrapper"> <!-- Wrapper for the radial gradient background -->
 		<div class="top">
-			<% var systemname = "";
+                    
+	    <% var systemname = "";
             var map1 = "";
             var map2 = "";
              %>
@@ -12,12 +13,12 @@
                     <li>
                         <% if(menu.systems[i].current){%>        
                     		<a  href ='#'  class ="system_current">
-                    		<%= menu.systems[i].name %>
-                            <%  systemname = menu.systems[i].name %>
+                    		<%= menu.systems[i].text %>
+                            <%  systemname = menu.systems[i].text %>
                     		</a>
                     	<% }else{ %>
                     	<a  href = <%= menu.systems[i].route %> >
-                    		<%= menu.systems[i].name %>
+                    		<%= menu.systems[i].text %>
                     		</a>
 
                     	<% } %>
@@ -50,12 +51,12 @@
 
                        <% if(menu.current[i].current) { %>
                             <a  href ="<%= href %>" class="nav-top-item current">
-                                <%= menu.current[i].name %>
-                                <% map1 =menu.current[i].name %>
+                                <%= menu.current[i].text %>
+                                <% map1 =menu.current[i].text %>
                              </a>
                         <% } else{%>
                        		 <a href ="<%= href %>" class="nav-top-item">
-                                <%= menu.current[i].name %>
+                                <%= menu.current[i].text %>
                              </a>
 
                         <% } %>
@@ -70,12 +71,12 @@
 
                        		<% if(menu.current[i].sub[j].current) { %>
                             	<li><a  href ="<%= href2 %>" class="current">
-                                <%= menu.current[i].sub[j].name %>
-                                <% map2 =menu.current[i].sub[j].name %>
+                                <%= menu.current[i].sub[j].text %>
+                                <% map2 =menu.current[i].sub[j].text %>
                              	</a></li>
                         	<% } else{%>
                        			<li> <a href ="<%= href2 %>">
-                             	   <%= menu.current[i].sub[j].name %>
+                             	   <%= menu.current[i].sub[j].text %>
                              	</a></li>
                        	 	<% } %>
   							<% }%>
