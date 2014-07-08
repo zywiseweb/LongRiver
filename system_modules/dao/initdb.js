@@ -17,7 +17,7 @@ var initkey = '123';
 exports.initDB = function(password, callback) {
     console.info('init start.');
     if (password === initkey) {
-        async.series([initAdmin(callback), inirRole(callback), initDepartment(callback)], function(err, message) {
+        async.series([inirRole(callback), initDepartment(callback), initAdmin(callback)], function(err, message) {
             if (err) {
                 callback(err, message);
             } else {
@@ -49,7 +49,7 @@ function initAdmin(callback) {
                 homeRoute: '/person',
                 role: {
                     id: 1,
-                    name: '超级管理员'
+                    text: '超级管理员'
                 },
                 department: {
                     id: 1,
@@ -71,7 +71,7 @@ function initAdmin(callback) {
  */
 function inirRole(callback) {
     console.info('init admin role.');
-    roleManager.findRole({'id': 1}, function(err, role) {
+    roleManager.findRole({text: '超级管理员'}, function(err, role) {
         if (err) {
             callback(err, '权限查询操作出现错误');
         }
@@ -79,17 +79,33 @@ function inirRole(callback) {
             console.info('添加超级管理员权限');
             var adminRole = {
                 id: 1, //权限ID
-                name: '超级管理员', //权限名称
+                text: '超级管理员', //权限名称
+                createUser: '系统',
                 homeRoute: '/person', //权限默认首页
                 access: structure //认证结构
             };
             console.info(adminRole);
-            roleManager.saveRole(adminRole, callback);
+            roleManager.saveRole(adminRole, function(err) {
+                if (!err) {
+                    roleManager.updateRole({text: '超级管理员'}, {$set: {id: 1}}, function(err) {
+                        if (err) {
+                            console.info('更新 id 出错');
+                        } else {
+                            console.info('初始化管理员 ID');
+                        }
+                    });
+
+                }
+            });
+
         } else {
             callback(null, '超级管理员权限已经存在');
             console.info('超级管理员权限已经存在');
         }
     });
+
+
+
 
 }
 
@@ -110,7 +126,7 @@ function initDepartment(callback) {
         if (!role) {
             console.info('添加部门信息');
             var department = {
-                id:100,
+                id: 100,
                 text: '系统部门',
                 'children': [
                     {
@@ -123,7 +139,7 @@ function initDepartment(callback) {
                     }, {
                         id: 3,
                         text: '试用用户'
-                        
+
                     }
                 ]
             };
