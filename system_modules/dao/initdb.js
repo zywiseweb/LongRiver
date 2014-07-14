@@ -71,38 +71,97 @@ function initAdmin(callback) {
  */
 function inirRole(callback) {
     console.info('init admin role.');
-    roleManager.findRole({text: '超级管理员'}, function(err, role) {
-        if (err) {
-            callback(err, '权限查询操作出现错误');
-        }
-        if (!role) {
-            console.info('添加超级管理员权限');
-            var adminRole = {
-                id: 1, //权限ID
-                text: '超级管理员', //权限名称
-                createUser: '系统',
-                homeRoute: '/person', //权限默认首页
-                access: structure //认证结构
-            };
-            console.info(adminRole);
-            roleManager.saveRole(adminRole, function(err) {
-                if (!err) {
-                    roleManager.updateRole({text: '超级管理员'}, {$set: {id: 1}}, function(err) {
-                        if (err) {
-                            console.info('更新 id 出错');
-                        } else {
-                            console.info('初始化管理员 ID');
+    async.parallel([
+        function(callback) {
+            roleManager.findRole({text: '超级管理员'}, function(err, role) {
+                if (err) {
+                    callback(err, '权限查询操作出现错误');
+                }
+                if (!role) {
+                    console.info('添加超级管理员权限');
+                    var adminRole = {
+                        id: 1, //权限ID
+                        text: '超级管理员', //权限名称
+                        createUser: '系统',
+                        homeRoute: '/person', //权限默认首页
+                        access: structure //认证结构
+                    };
+                    console.info(adminRole);
+                    roleManager.saveRole(adminRole, function(err) {
+                        if (!err) {
+                            roleManager.updateRole({text: '超级管理员'}, {$set: {id: 1}}, function(err) {
+                                if (err) {
+                                    console.info('更新 id 出错');
+                                } else {
+                                    console.info('初始化管理员 ID');
+                                }
+                            });
+
                         }
                     });
 
+
+                } else {
+                    callback(null, '超级管理员权限已经存在');
+                    console.info('超级管理员权限已经存在');
                 }
             });
+        },
+        function(callback) {
+            roleManager.findRole({text: '试用权限'}, function(err, role) {
+                if (err) {
+                    callback(err, '权限查询操作出现错误');
+                }
+                if (!role) {
+                    console.info('添加超级管理员权限');
+                    var adminRole = {
+                        id: 0, //权限ID
+                        text: '试用权限', //权限名称
+                        createUser: '系统',
+                        homeRoute: '/person', //权限默认首页
+                        access: [{
+                                text: '个人空间',
+                                id: 2,
+                                route: '/person',
+                                sub: [{
+                                        text: '首页',
+                                        id: 21,
+                                        route: '/person',
+                                        sub: []
+                                    }
+                                ]
+                            }] //认证结构
+                    };
+                    console.info(adminRole);
+                    roleManager.saveRole(adminRole, function(err) {
+                        if (!err) {
+                            roleManager.updateRole({text: '试用权限'}, {$set: {id: 0}}, function(err) {
+                                if (err) {
+                                    console.info('更新 id 出错');
+                                } else {
+                                    console.info('初始化管理员 ID');
+                                }
+                            });
 
-        } else {
-            callback(null, '超级管理员权限已经存在');
-            console.info('超级管理员权限已经存在');
+                        }
+                    });
+
+                } else {
+                    callback(null, '超级管理员权限已经存在');
+                    console.info('超级管理员权限已经存在');
+                }
+            });
+        },
+        function(callback) {
         }
+    ], function(err, results) {
+
+
+
+
+
     });
+
 
 
 
