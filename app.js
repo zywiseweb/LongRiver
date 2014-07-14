@@ -8,8 +8,8 @@ var http = require('http');
 var path = require('path');
 var flash = require('connect-flash');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;//认证策略
-var async = require('async');//流程控制
+var LocalStrategy = require('passport-local').Strategy; //认证策略
+var async = require('async'); //流程控制
 
 var init = require('./system_modules/dao/initdb');
 var role = require('./system_modules/role/role');
@@ -18,7 +18,6 @@ var taskManager = require('./system_modules/task/task');
 var departmentManager = require('./system_modules/department/department');
 var util = require('./system_modules/util');
 var scheduleManager = require('./system_modules/schedule/schedule');
-
 //*************************************
 /**
  * 认证部分
@@ -28,13 +27,11 @@ var scheduleManager = require('./system_modules/schedule/schedule');
 passport.serializeUser(function(user, done) {
     done(null, user.username);
 });
-
 passport.deserializeUser(function(username, done) {
     userManager.findUser({username: username}, function(err, user) {
         done(err, user);
     });
 });
-
 /**
  * 用户认证
  * @param {type} param
@@ -56,10 +53,8 @@ passport.use(new LocalStrategy(function(username, password, done) {
                 return done(null, false, {message: '密码错误。'});
             }
         });
-
     });
 }));
-
 /**
  * 判断用户是否登陆
  * @param {type} req
@@ -92,7 +87,6 @@ function ensureAuthenticated(req, res, next) {
                 }
 
             });
-
         } else {
             role.authRole({"id": req.session.user.role.id, "route": req.path}, //判断权限
             function(err, role) {
@@ -119,8 +113,6 @@ function ensureAuthenticated(req, res, next) {
 }
 //*************************************
 var app = express();
-
-
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -137,7 +129,6 @@ app.use(express.session({secret: 'hx'}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
-
 // development only
 if ('development' === app.get('env')) {
     app.use(express.errorHandler());
@@ -145,15 +136,12 @@ if ('development' === app.get('env')) {
 //路由
 
 app.get('/', ensureAuthenticated);
-
-
 app.get('/login', function(req, res) {
     if (req.isAuthenticated()) {
         res.redirect('/');
     }
     res.render('login', {message: '欢迎'});
 });
-
 app.post('/login', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
         if (err) {
@@ -172,17 +160,14 @@ app.post('/login', function(req, res, next) {
             req.session.user = user;
             //重定向到权限首页
             return res.redirect('/');
-
             //  return res.redirect('/home');
         });
     })(req, res, next);
 });
-
 app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
 });
-
 app.get('/init',
         function(req, res) {
             res.render('init/initdb', {
@@ -218,7 +203,6 @@ app.get('/person', ensureAuthenticated, function(req, res) {
 app.get('/user', ensureAuthenticated, function(req, res) {
     var page = req.query.p ? parseInt(req.query.p) : 1;
     var query = req.query.n ? {name: req.query.n} : null;
-
     async.parallel([
         function(callback) {
             role.getMenu(req.path, req.session.role, callback);
@@ -240,8 +224,6 @@ app.get('/user', ensureAuthenticated, function(req, res) {
         }
     });
 });
-
-
 app.get('/userAdd', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -262,9 +244,64 @@ app.get('/userAdd', ensureAuthenticated, function(req, res) {
         }
     });
 });
+app.post('/userAdd', ensureAuthenticated, function(req, res) {
 
+    var name = req.body.name;
+    var username = req.body.username;
+    var password = req.body.password;
+    var roleID = req.body.role;
+    var departmentID = req.body.department;
+    async.parallel([
+        function(callback) {
+            userManager.findUser({username: username}, callback);
+        },
+        function(callback) {
+            role.findRole({id: roleID}, callback);
+        },
+        function(callback) {
+            departmentManager.findDepartment({id: departmentID}, callback);
+        }
+    ], function(err, results) {
+        if (err) {
+            res.send(err);
+        } else {
+            if (results[0]) {//用户存在
+                res.send('此用户名已经被注册了');
+            } else {
+                var role;
+                if (results[1]) {
+                    role = {id: roleID, text: results[1].text};
 
+                } else {
+                    role = {id: 0, text: '试用用户'};
+                }
+                var department;
+                if (results[2]) {
+                    department = {id: departmentID, text: results[2].text};
+                } else {
+                    department = {id: 3, text: '试用用户'};
+                }
+                var newUser = {
+                    username: username, //登陆名
+                    password: password, //密码
+                    name: name, //用户名
+                    homeRoute: '/',
+                    role: role,
+                    department: department
+                };
+                console.info(newUser);
 
+                userManager.saveUser(newUser, function(err) {
+                    if (err) {
+                        res.send('保存时好像出错了');
+                    } else {
+                        res.send('200');
+                    }
+                });
+            }
+        }
+    });
+});
 app.get('/userEdit', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -280,10 +317,6 @@ app.get('/userEdit', ensureAuthenticated, function(req, res) {
                 }
             });
 });
-
-
-
-
 app.get('/system', ensureAuthenticated, function(req, res) {
     async.parallel([
         function(callback) {
@@ -294,11 +327,9 @@ app.get('/system', ensureAuthenticated, function(req, res) {
                 res.render('system/user', {user: req.session.user, menu: results[0]});
             });
 });
-
 app.get('/role', ensureAuthenticated, function(req, res) {
     var page = req.query.p ? parseInt(req.query.p) : 1;
     var query = req.query.n ? {name: req.query.n} : null;
-
     async.parallel([
         function(callback) {
             role.getMenu(req.path, req.session.role, callback);
@@ -319,21 +350,18 @@ app.get('/role', ensureAuthenticated, function(req, res) {
             res.render('system/role', {user: req.session.user, menu: results[0], role: results[1]});
         }
     });
-
 });
-
 app.get('/roleDelete', ensureAuthenticated, function(req, res) {
-    
+
     var id = req.query.id ? req.query.id : null;
-    if(id){
-        role.deleteRole(id,function(err,callback){
+    if (id) {
+        role.deleteRole(id, function(err, callback) {
             res.redirect('/role');
         });
-    }else{
+    } else {
         res.redirect('/role');
     }
 });
-
 app.get('/roleAdd', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -347,9 +375,7 @@ app.get('/roleAdd', ensureAuthenticated, function(req, res) {
             res.render('system/roleAdd', {user: req.session.user, menu: results[0], access: role.gatRoleTree(req.session.role.access)});
         }
     });
-
 });
-
 /**
  * 编辑权限
  */
@@ -361,29 +387,23 @@ app.get('/roleEdit', ensureAuthenticated, function(req, res) {
         },
         function(callback) {
             role.findRole({id: id}, callback);
-
         }
     ], function(err, results) {
         if (err) {
             res.redirect('/err');
         } else {
-            
-            if (results[1]) {
-                console.info('-->'+results[1].access);
-           
-            
-                 var leaf = role.getLeafID(results[1]);
-                 console.info(leaf);
-                res.render('system/roleEdit', {user: req.session.user, menu: results[0], access: role.gatRoleTree(req.session.role.access), selected: leaf, role: results[1]});
 
+            if (results[1]) {
+                console.info('-->' + results[1].access);
+                var leaf = role.getLeafID(results[1]);
+                console.info(leaf);
+                res.render('system/roleEdit', {user: req.session.user, menu: results[0], access: role.gatRoleTree(req.session.role.access), selected: leaf, role: results[1]});
             } else {
                 res.redirect('/role');
             }
         }
     });
-
 });
-
 /**
  * 保存新权限
  */
@@ -391,7 +411,7 @@ app.post('/roleAdd', ensureAuthenticated, function(req, res) {
     var name = req.body.name;
     var access = req.body.access;
     console.info("==>" + access);
-    role.newRole(name, access,  req.session.user.name, function(err) {
+    role.newRole(name, access, req.session.user.name, function(err) {
         if (err) {
             res.send('出错了');
         } else {
@@ -399,7 +419,6 @@ app.post('/roleAdd', ensureAuthenticated, function(req, res) {
         }
     });
 });
-
 app.post('/roleEdit', ensureAuthenticated, function(req, res) {
     var name = req.body.name;
     var access = req.body.access;
@@ -413,7 +432,6 @@ app.post('/roleEdit', ensureAuthenticated, function(req, res) {
         }
     });
 });
-
 app.get('/department', ensureAuthenticated, function(req, res) {
     async.parallel([
         function(callback) {
@@ -425,10 +443,7 @@ app.get('/department', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('system/department', {user: req.session.user, menu: results[0], department: results[1]});
     });
-
 });
-
-
 app.post('/departmentSave', ensureAuthenticated, function(req, res) {
     var department = req.body.department;
     departmentManager.updateDepartment(department, function(err) {
@@ -436,14 +451,10 @@ app.post('/departmentSave', ensureAuthenticated, function(req, res) {
             res.send(err);
         } else {
             res.send('200');
-
         }
     });
     return;
 });
-
-
-
 app.get('/newscommmit', ensureAuthenticated, function(req, res) {
     async.parallel([
         function(callback) {
@@ -452,15 +463,12 @@ app.get('/newscommmit', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('spread/news/commit', {user: req.session.user, menu: results[0]});
     });
-
 });
-
 app.get('/newssupport', ensureAuthenticated, function(req, res) {
 
 
     var page = req.query.p ? parseInt(req.query.p) : 1;
     var query = req.query.n ? {name: req.query.n} : null;
-
     async.parallel([
         function(callback) {
             role.getMenu(req.path, req.session.role, callback);
@@ -484,7 +492,6 @@ app.get('/newssupport', ensureAuthenticated, function(req, res) {
 
     });
 });
-
 app.get('/newssupportdetail', ensureAuthenticated, function(req, res) {
     var id = req.query.id;
     taskManager.findSubTask(id, function(err, resunlt) {
@@ -495,7 +502,6 @@ app.get('/newssupportdetail', ensureAuthenticated, function(req, res) {
         }
     });
 });
-
 app.get('/newssupportNew', ensureAuthenticated, function(req, res) {
     async.parallel([
         function(callback) {
@@ -504,7 +510,6 @@ app.get('/newssupportNew', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('spread/news/supportNew', {user: req.session.user, menu: results[0]});
     });
-
 });
 app.post('/newssupportNew', ensureAuthenticated, function(req, res) {
     taskManager.addNewsSupportTask(req, function(err) {
@@ -558,9 +563,7 @@ app.get('/sinasearch', ensureAuthenticated, function(req, res) {
             , function(err, results) {
                 res.render('account/sina/search', {user: req.session.user, menu: results[0]});
             });
-
 });
-
 app.get('/sinaloadin', ensureAuthenticated, function(req, res) {
     async.parallel([
         function(callback) {
@@ -580,9 +583,7 @@ app.get('/lrstatus', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrstatus', {user: req.session.user, menu: results[0]});
     });
-
 });
-
 app.get('/lrsinaAccount', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -592,10 +593,7 @@ app.get('/lrsinaAccount', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrsinaAccount', {user: req.session.user, menu: results[0]});
     });
-
 });
-
-
 app.get('/lrsinaAccount24', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -605,10 +603,7 @@ app.get('/lrsinaAccount24', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrsinaAccount24', {user: req.session.user, menu: results[0]});
     });
-
 });
-
-
 app.get('/lrmiss', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -618,10 +613,7 @@ app.get('/lrmiss', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrmiss', {user: req.session.user, menu: results[0]});
     });
-
 });
-
-
 app.get('/lrmiss30', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -631,10 +623,7 @@ app.get('/lrmiss30', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrmiss30', {user: req.session.user, menu: results[0]});
     });
-
 });
-
-
 app.get('/lrmiss7', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -644,10 +633,7 @@ app.get('/lrmiss7', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrmiss7', {user: req.session.user, menu: results[0]});
     });
-
 });
-
-
 app.get('/lrmissOne', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -657,10 +643,7 @@ app.get('/lrmissOne', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrmissOne', {user: req.session.user, menu: results[0]});
     });
-
 });
-
-
 app.get('/lrlog', ensureAuthenticated, function(req, res) {
 
     async.parallel([
@@ -670,11 +653,7 @@ app.get('/lrlog', ensureAuthenticated, function(req, res) {
     ], function(err, results) {
         res.render('longriver/lrlog', {user: req.session.user, menu: results[0]});
     });
-
 });
-
-
-
 //----------------------------
 app.get('/norole', function(req, res) {
     res.render('norole');
@@ -686,7 +665,6 @@ app.get('/err', function(req, res) {
 app.get('*', function(req, res) {
     res.render('404');
 });
-
 //启动服务器
 
 http.createServer(app).listen(app.get('port'), function() {
