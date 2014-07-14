@@ -1,4 +1,70 @@
 <%- include ../header %>
+<script>
+    function saveUser() {
+         var valid = true;
+        
+        var username = $("#username").val();
+        var name = $("#name").val();
+        var password = $("#password").val();
+        var re_password = $("#re_password").val();
+        var role = $('#role').val();
+        var department = $('#department').val();
+        
+      valid = valid && checkLength( username, "用户名", 3, 16 );
+      valid = valid && checkLength( name, "姓名", 1, 80 );
+      valid = valid && checkLength( password, "密码", 6, 16 );
+      
+      if(password!==re_password){
+          showinfo('密码不一致');
+          return;
+      }
+      if(valid){
+          
+           showinfo("请稍后,正在保存....");
+        $('#sohu_doSubmit').hide();
+        $.ajax({
+            type: 'POST',
+            url: "/userAdd",
+            data: {
+                username:username,
+                password:password,
+                name: name,
+                role :role,
+                department:department
+            },
+            dataType: "json",
+            success: function(text) {
+                console.info(text);
+                if (text === 200) {
+                    showinfo("保存成功。");
+                    setTimeout(function() {
+                        location.href = "/user";
+                    }, 500);
+                } else {
+                    showinfo(text);
+                    $('#sohu_doSubmit').show();
+                }
+            },
+            error: function(XMLHttpRequest, textStatus) {
+                showinfo(textStatus);
+            }
+        });
+      }
+    }
+    
+    function showinfo(text) {
+        $("#info").text(text);
+    }
+    
+    function checkLength( o, n, min, max ) {
+      if ( o.length > max || o.length < min ) {
+        showinfo(n+'填写有误。');
+        return false;
+      } else {
+        return true;
+      }
+    }
+</script>
 
 <%- include ../body %>  
 <div class="content-box"><!-- Start Content Box -->
@@ -83,7 +149,7 @@
                     <tr>
 
                         <td>
-                            <div class="button" id="sohu_doSubmit" inclick="">提交</div>
+                            <div class="button" id="sohu_doSubmit" onClick="saveUser();">提交</div>
                         </td> 
                         <td></td> 
                     </tr>
