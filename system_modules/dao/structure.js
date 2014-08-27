@@ -8,8 +8,20 @@ var structure = [
                 text: '首页',
                 id: 21,
                 route: '/person',
-                sub: []
+                sub: [
+                    {
+                        text: '个人信息',
+                        id: 211,
+                        route: '/personinfo'
+                    },
+                    {
+                        text: '修改密码',
+                        id: 212,
+                        route: '/changepassword'
+                    }
+                ]
             }
+
         ]
     },
     {
@@ -18,7 +30,7 @@ var structure = [
         route: '/user',
         sub: [
             {
-                text: '用户与权限',
+                text: '用户管理',
                 id: 11,
                 route: '',
                 sub: [
@@ -41,7 +53,16 @@ var structure = [
                         text: '创建用户',
                         id: 114,
                         route: '/userAdd'
-                    },
+                    }
+
+
+                ]
+            },
+            {
+                text: '权限管理',
+                id: 12,
+                route: '',
+                sub: [
                     {
                         text: '权限管理',
                         id: 112,
@@ -65,7 +86,14 @@ var structure = [
                         text: '创建权限',
                         id: 115,
                         route: '/roleAdd'
-                    },
+                    }
+                ]
+            },
+            {
+                text: '部门管理',
+                id: 13,
+                route: '',
+                sub: [
                     {
                         text: '部门管理',
                         id: 113,
@@ -77,38 +105,75 @@ var structure = [
                                 route: '/departmentSave'
                             }
                         ]
-
                     }
                 ]
             },
             {
-                text: '服务器管理',
-                id: 116,
-                route: '',
-                sub: []
+                text: '首页设置',
+                id: 14,
+                route: '/homeset',
+                sub: [
+                    {
+                        text: '首页设置',
+                        id: 141,
+                        route: '/homeset'
+                        
+                    }
+                ]
             }
+        
         ]
     },
     {
         text: '账号管理',
         id: 3,
-        route: '/sinasearch',
+        route: '/accountsearch',
         sub: [
             {
-                text: '新浪账号',
+                text: '账号管理',
                 id: 31,
                 route: '',
                 sub: [
                     {
                         text: '账号查询',
                         id: 311,
-                        route: '/sinasearch'
+                        route: '/accountsearch',
+                        sub: [
+                            {
+                                text: '账号详情',
+                                id: 3111,
+                                route: '/accountdetail'
+                            },
+                            {
+                                text: '账号删除',
+                                id: 3112,
+                                route: '/accountdetele'
+                            },
+                            {
+                                text: '账号编辑',
+                                id: 3113,
+                                route: '/accountEdit'
+                            }
+                        ]
                     },
                     {
                         text: '账号导入',
                         id: 312,
-                        route: '/sinaloadin'
+                        route: '/accountloadin'
                     }
+                ]
+            },
+            {
+                text: '账号统计',
+                id: 32,
+                route: '',
+                sub: [
+                    {
+                        text: '类型统计',
+                        id: 321,
+                        route: '/accountstatistics'
+                    }
+
                 ]
             }
         ]
@@ -204,6 +269,44 @@ var structure = [
 
                     }
                 ]
+            },
+            {
+                text: '服务器管理',
+                id: 52,
+                route: '/clientserver',
+                sub: [
+                    {
+                        text: '服务器管理',
+                        id: 521,
+                        route: '/clientserver'
+
+                    },
+                    {
+                        text: '登记服务器',
+                        id: 522,
+                        route: '/addserver'
+
+                    },
+                    {
+                        text: '服务器统计',
+                        id: 523,
+                        route: '/statisticsServer'
+
+                    }
+                ]
+            },
+            {
+                text: '代理IP',
+                id: 53,
+                route: '/proxyIP',
+                sub: [
+                    {
+                        text: '代理IP',
+                        id: 531,
+                        route: '/proxyIP'
+
+                    }
+                ]
             }
         ]
     },
@@ -272,6 +375,69 @@ var structure = [
                 text: '日志查询',
                 id: 64,
                 route: '/lrlog'
+
+            }
+        ]
+    },
+    {
+        text: '资源库',
+        id: 7,
+        route: '/resource'
+    },
+    {
+        text: '移动支持',
+        id: 8,
+        route: '/mobilesupport',
+        sub: [
+            {
+                text: '移动任务',
+                id: 81,
+                route: '/mobilesupport',
+                sub: [
+                    {
+                        text: '移动任务',
+                        id: 811,
+                        route: '/mobilesupport',
+                        sub:[
+                            {
+                                text:'任务详情',
+                                id:8111,
+                                route:'/mobiletaskDetail'
+                            }
+                        ]
+
+                    },
+                    {
+                        text: '添加任务',
+                        id: 812,
+                        route: '/mslist'
+                    },
+                    {
+                        text: '任务统计',
+                        id: 813,
+                        route: '/msstatistics'
+
+                    }
+                ]
+
+            }, {
+                text: '移动终端',
+                id: 82,
+                route: '/mobileclient',
+                sub: [
+                    {
+                        text: '终端列表',
+                        id: 821,
+                        route: '/mobileclient'
+
+                    },
+                    {
+                        text: '终端统计',
+                        id: 822,
+                        route: '/mclientstatistics'
+
+                    }
+                ]
 
             }
         ]

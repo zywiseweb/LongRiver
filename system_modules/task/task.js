@@ -2,7 +2,6 @@ var mongoose = require('../database/mongodb');
 var scheduleManager = require('../schedule/schedule');
 var async = require('async');//流程控制
 var Schema = mongoose.Schema;
-var net = require('net');
 var util = require('../util');
 
 //此类用户存储管理数据模型
@@ -19,7 +18,7 @@ var taskSchema = new Schema({
     foregroundID: {type: Number},
     name: {type: String},
     task_id: {type: Number, required: true, default: new Date().getTime()},
-    task: {type: Number, required: true},
+    task: {type: String, required: true},
     sub_count: {type: Number, required: true},
     sub_schedule_count: {type: Number},
     schedule_min: {type: Number},
@@ -28,7 +27,8 @@ var taskSchema = new Schema({
     task_status: {type: Number},
     create_time: {type: String},
     task_type: {type: Number, required: true},
-    need_schedule_times: {type: Number}
+    need_schedule_times: {type: Number},//重复测试
+    platformName: {type: String} //平台名称
 },
 {collection: "task"});
 var subTaskSchema = new Schema({
@@ -69,22 +69,7 @@ exports.saveTask = function(task, callback) {
     if (!task) {
         callback('task is null');
     }
-    //  console.info(task);
-
-    //  async.parallel([
-    /*   function(callback) {//保持数据
-     var newTask = new TaskManager(task);
-     newTask.save(function(err) {
-     if (err) {
-     callback(err, '保存错误');
-     console.log(err);
-     } else {
-     console.log("保存成功");
-     callback(null, '保存成功');
-     }
-     });
-     },*/
-    //    function(callback) {//发送数据
+    
     var str = JSON.stringify(task);
     console.info(str + "--");
     var d = "{\"content\":"+str+",\"type\": 101}\r\n";
@@ -114,15 +99,21 @@ exports.saveTask = function(task, callback) {
 exports.findPagination = function(params, callback) {
     var q = params.search || {}; //查询调价
     var col = params.columns; //字段
+    var task = params.task; //字段
 
     var pageNumber = params.num || 1; //页数
     var resultsPerPage = params.limit || 10; //每页行数
 
     var skipFrom = (pageNumber * resultsPerPage) - resultsPerPage; //其实也
 
-    //console.info('q:' + q + ' col:' + col + ' pageNumber:' + pageNumber + ' skipFrom:' + skipFrom);
-
-    var query = TaskManager.find(q, col).sort([['_id', -1]]).skip(skipFrom).limit(resultsPerPage);
+   
+var support = [304,404];
+ console.info('q:' + q + ' col:' + col + ' pageNumber:' + pageNumber + ' skipFrom:' + skipFrom);
+var query = TaskManager.find(q)//{task:{$in:['303']}}
+        .where('task').in(task)
+        .sort([['_id', -1]])
+        .skip(skipFrom)
+        .limit(resultsPerPage);
     query.exec(function(err, results) {
 
         if (err) {
@@ -242,6 +233,6 @@ exports.addNewsSupportTask = function(req, addTaskCallback) {
         }
     });
 
-}
+};
 
 

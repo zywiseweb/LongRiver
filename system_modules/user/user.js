@@ -112,9 +112,7 @@ exports.findPagination = function(params, callback) {
     var resultsPerPage = params.limit || 10;//每页行数
 
     var skipFrom = (pageNumber * resultsPerPage) - resultsPerPage;//其实也
-
     console.info('q:' + q + ' col:' + col + ' pageNumber:' + pageNumber + ' skipFrom:' + skipFrom);
-
     var query = userManager.find(q, col).sort('-createTime').skip(skipFrom).limit(resultsPerPage);
 
     query.exec(function(err, results) {
@@ -132,8 +130,6 @@ exports.findPagination = function(params, callback) {
             });
         }
     });
-
-
 };
 
 
