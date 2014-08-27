@@ -1,0 +1,517 @@
+<%- include ../../header %>
+<script>
+    $(function() {
+//-------------网易新闻-------------------
+        var name = $("#taskname");
+        var url = $("#url");
+        var sub_count = $("#sub_count");
+        var allFields = $([]).add(name).add(url).add(sub_count);
+        var info = $("#163_addInfo");
+        var infobox = $("#infobox");
+        var urlRegex = "^((http)?://)?comment\\.[0-9a-z_!~*'().&=+$%-]+\\.163\.com/([0-9a-z_!~*'().&=+$%-]+)?/[0-9A-Z]+/[0-9A-Z]+\.html([0-9a-z_!~*'().&=+$%-]+)?";
+        $("#doSubmit").click(function() {
+
+            var bValid = true;
+            allFields.removeClass("ui-state-error");
+            bValid = bValid && checkLength(name, "任务名称", 1, 200);
+            bValid = bValid && checkLength(url, "任务地址", 1, 200);
+            bValid = bValid && checkRegexp(url, new RegExp(urlRegex), "地址格式有误。");
+            bValid = bValid && checkRegexp(sub_count, /^[0-9]*$/, "请输入正确数量。");
+            if (sub_count.val() < 1) {
+                updateTips("数量必须大于0.");
+                bValid = bValid && false;
+            }
+            if (sub_count.val() > 500) {
+                updateTips("数量必须小于500.");
+                bValid = bValid && false;
+            }
+            if (bValid) {
+                console.info("keyitijiao");
+                var param = {
+                    task: $("#task").val(),
+                    taskname: name.val(),
+                    url: url.val(),
+                    sub_count: sub_count.val(),
+                    task_type: $("#task_type").val()
+
+                };
+                updateTips2("正在提交，请稍后...");
+                $("#duSubmit").hide();
+                $.ajax({
+                    type: 'POST',
+                    url: "/newssupportNew",
+                    data: param,
+                    dataType: "text",
+                    success: function(text) {
+                        console.info(text);
+                        if (text === '1') {
+                            updateTips2("添加成功,页面即将调换到列表页。");
+                            setTimeout(function() {
+                                location.href = "/newssupport";
+                            }, 1000);
+
+                        } else {
+                            updateTips2(text);
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus) {
+                        updateTips("添加出错了，请稍后再试。");
+                    }
+                });
+            }
+
+        });
+
+        function updateTips(t) {
+            infobox.removeClass("information");
+            infobox.addClass("error");
+            info.text(t);
+            setTimeout(function() {
+                infobox.removeClass("error");
+                infobox.addClass("information");
+            }, 2000);
+        }
+        //--------sohu------------------
+        var sohu_name = $("#sohu_taskname");
+        var sohu_url = $("#sohu_url");
+        var sohu_commnet_url = $("#sohu_commnet_url");
+        var sohu_sub_count = $("#sohu_sub_count");
+        var sohu_allFields = $([]).add(sohu_name).add(sohu_url).add(sohu_commnet_url).add(sohu_sub_count);
+
+        var sohu_info = $("#sohu_addInfo");
+        var sohu_infobox = $("#sohu_infobox");
+        var sohu_urlRegex = "^((http)?://)?[0-9a-z_!~*'().&=+$%-]+\\.sohu\.com/pinglun/cyqemw6s1/([0-9]+)?";
+        var sohu_comment_urlRegex = "^((http)?://)?changyan.sohu.com/c/([0-9]+)?/\?([0-9a-z_!~*'().&=+$%-]+)?";
+        $("#sohu_doSubmit").click(function() {
+            console.info("sohu");
+
+            var bValid = true;
+            allFields.removeClass("ui-state-error");
+            bValid = bValid && sohu_checkLength(sohu_name, "任务名称", 1, 200);
+            bValid = bValid && sohu_checkLength(sohu_url, "任务地址", 1, 200);
+            bValid = bValid && sohu_checkLength(sohu_commnet_url, "评论地址", 1, 200);
+            bValid = bValid && sohu_checkRegexp(sohu_url, new RegExp(sohu_urlRegex), "任务地址格式有误。");
+            bValid = bValid && sohu_checkRegexp(sohu_commnet_url, new RegExp(sohu_comment_urlRegex), "评论地址格式有误。");
+            bValid = bValid && sohu_checkRegexp(sohu_sub_count, /^[0-9]*$/, "请输入正确数量。");
+
+            if (sohu_sub_count.val() < 1) {
+                updateTips_sohu("数量必须大于0.");
+                bValid = bValid && false;
+            }
+            if (sohu_sub_count.val() > 500) {
+                updateTips_sohu("数量必须小于500.");
+                bValid = bValid && false;
+            }
+            if (bValid) {
+                // console.info("keyitijiao");
+                var param = {
+                    task: $("#sohu_task").val(),
+                    taskname: sohu_name.val(),
+                    url: sohu_url.val(),
+                    comment_url: sohu_commnet_url.val(),
+                    sub_count: sohu_sub_count.val(),
+                    task_type: $("#sohu_task_type").val()
+
+                };
+                sohu_updateTips2("正在提交，请稍后...");
+                $("#sohu_duSubmit").hide();
+                $.ajax({
+                    type: 'POST',
+                    url: "/newssupportNew",
+                    data: param,
+                    dataType: "text",
+                    success: function(text) {
+                        console.info(text);
+                        if (text === '1') {
+                            sohu_updateTips2("添加成功,页面即将调换到列表页。");
+                            setTimeout(function() {
+                                location.href = "/newssupport";
+                            }, 1000);
+
+                        } else if(text ==='socket error'){
+                            sohu_updateTips2("任务已经保存，等待执行。");
+                            setTimeout(function() {
+                                location.href = "/newssupport";
+                            }, 1000);
+                        }else{
+                             sohu_updateTips2(text);
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus) {
+                        updateTips_sohu("添加出错了，请稍后再试。");
+                    }
+                });
+            }
+
+        });
+
+        function updateTips_sohu(t) {
+            sohu_infobox.removeClass("information");
+            sohu_infobox.addClass("error");
+            sohu_info.text(t);
+            setTimeout(function() {
+                sohu_infobox.removeClass("error");
+                sohu_infobox.addClass("information");
+            }, 2000);
+        }
+        function sohu_updateTips2(t) {
+            sohu_info.text(t);
+        }
+        function sohu_checkLength(o, n, min, max) {
+            console.info(o.val());
+            if (o.val().length > max || o.val().length < min) {
+                o.addClass("ui-state-error");
+                updateTips_sohu(n + " 输入有误");
+                return false;
+            } else {
+                return true;
+            }
+        }
+        
+        function sohu_checkRegexp(o, regexp, n) {
+            if (!(regexp.test(o.val()))) {
+                updateTips_sohu(n);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+
+        //--------------------------
+        function updateTips2(t) {
+            info.text(t);
+        }
+
+        function checkLength(o, n, min, max) {
+            if (o.val().length > max || o.val().length < min) {
+                o.addClass("ui-state-error");
+                updateTips(n + " 输入有误");
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkRegexp(o, regexp, n) {
+            if (!(regexp.test(o.val()))) {
+
+                updateTips(n);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    });
+
+
+</script>
+
+
+<%- include ../../body %>  
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>新闻支持任务</h3>
+        <ul class="content-box-tabs">
+            <li><a href="#tab1" class="default-tab">网易</a></li> <!-- href must be unique and match the id of target div -->
+            <li><a href="#tab2">新浪</a></li>
+            <li><a href="#tab3">搜狐</a></li>
+            <li><a href="#tab4">凤凰</a></li>
+        </ul>
+
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="tab-content default-tab" id="tab1"> <!-- tab 网易 -->
+            <div class="notification information png_bg" id="infobox">
+                <div id="163_addInfo">
+                    请填写以下内容。
+                </div>
+            </div>
+
+            <form action="/newssupportNew" method="post">
+
+                <fieldset>
+                    <input type="hidden" name="task" id="task" value="304"/>
+                    <table style="width:100%;">
+                        
+                        <tr>
+                            <td>
+                                 <label>任务名称</label>
+                            </td>
+                            <td>
+                               <input class="text-input medium-input datepicker" type="text" id="taskname" name="taskname" value="未命名网易新闻执行任务" /> 
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                 <label>任务地址</label>
+                            </td>
+                             <td>
+                                 <input class="text-input large-input" type="text" id="url" name="url" placeholder="请输入支持连接地址，在评论内容下点击 '复制' 即可复制连接"/>
+
+                            </td>
+                        </tr>
+                       
+                        <tr>
+                            <td>
+                                <label>支持数量</label>
+                            </td>
+                             <td>
+                                 <input class="text-input small-input ui-state-error" type="text" id="sub_count" name="sub_count"  value="100"  />  <!-- Classes for input-notification: success, error, information, attention -->
+                        <span class="input-notification success png_bg">每次最大500次</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="button" id="doSubmit">提交</div>
+                            </td>
+                              <td></td>
+                        </tr>
+                    </table>
+                  
+                    
+                     <input type="hidden"  id="task_type" value="901"/>
+                 <!--   <p>
+                        <label>执行方式</label>              
+                        <select name="task_type" class="small-input" id="task_type">
+
+                            <option value="901">精确调度</option>
+                            <option value="902">分发广播</option>
+
+                        </select> 
+                    </p>
+                 -->
+
+
+                </fieldset>
+            </form>
+            
+        </div><!-- tab 网易 -->
+        <div class="tab-content" id="tab2"> <!-- tab 新浪 -->
+            <div class="notification information png_bg" id="infobox">
+                <div id="sina_addInfo">
+                    请填写以下内容。
+                </div>
+            </div>
+
+            <form action="/newssupportNew" method="post">
+
+                <fieldset>
+                    <input type="hidden" name="task" id="task" value="207"/>
+                    <table style="width:100%;">
+                        
+                        <tr>
+                            <td>
+                                 <label>任务名称</label>
+                            </td>
+                            <td>
+                               <input class="text-input medium-input datepicker" type="text" id="taskname" name="taskname" value="未命名新浪新闻支持任务" /> 
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                 <label>任务地址</label>
+                            </td>
+                             <td>
+                                 <input class="text-input large-input" type="text" id="url" name="url"/>
+
+                            </td>
+                        </tr>
+                         <tr>
+                            <td>
+                                 <label>评论内容</label>
+                            </td>
+                             <td>
+                                 <textarea class="text-input textarea wysiwyg" id="comment_content" name="comment_content"  rows="5"></textarea>
+
+                            </td>
+                        </tr>
+                       
+                        <tr>
+                            <td>
+                                <label>支持数量</label>
+                            </td>
+                             <td>
+                                 <input class="text-input small-input ui-state-error" type="text" id="sub_count" name="sub_count"  value="100"  />  <!-- Classes for input-notification: success, error, information, attention -->
+                        <span class="input-notification success png_bg">每次最大500次</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="button" id="sina_doSubmit">提交</div>
+                            </td>
+                              <td></td>
+                        </tr>
+                    </table>
+                  
+                    
+                     <input type="hidden"  id="task_type" value="901"/>
+                 <!--   <p>
+                        <label>执行方式</label>              
+                        <select name="task_type" class="small-input" id="task_type">
+
+                            <option value="901">精确调度</option>
+                            <option value="902">分发广播</option>
+
+                        </select> 
+                    </p>
+                 -->
+
+
+                </fieldset>
+            </form>
+            
+            
+        </div><!-- tab 新浪 -->
+        <div class="tab-content" id="tab3"> <!-- tab 搜狐 -->
+            <div class="notification information png_bg" id="sohu_infobox">
+                <div id="sohu_addInfo">
+                    请填写以下内容。
+                </div>
+            </div>
+
+            <form action="/newssupportNew" method="post">
+
+                <fieldset>
+                    <input type="hidden" name="task" id="sohu_task" value="404"/>
+                    <table style="width:100%;">
+                        <tr>
+                            <td>
+                                <label>任务名称</label> 
+                            </td>
+                            <td>
+                                <input class="text-input medium-input datepicker" type="text" id="sohu_taskname" name="taskname" value="未命名搜狐新闻执行任务" /> 
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>新闻地址</label>
+                            </td>
+                            <td>
+                                <input class="text-input large-input" type="text" id="sohu_url" name="url" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>评论地址</label>
+                            </td>
+                            <td>
+                                 <input class="text-input large-input" type="text" id="sohu_commnet_url" name="url" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                 <label>支持数量</label>
+                            </td>
+                            <td>
+                                <input class="text-input small-input ui-state-error" type="text" id="sohu_sub_count" name="sub_count" value="100" />  <!-- Classes for input-notification: success, error, information, attention -->
+                        <br /><small>每次最大500次</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="button" id="sohu_doSubmit">提交</div>
+                            </td>
+                              <td></td>
+                        </tr>
+                    </table>
+                   
+                     <input type="hidden"  id="sohu_task_type" value="901"/>
+                  
+
+                </fieldset>
+            </form>
+             
+        </div><!-- tab 搜狐 -->
+        <div class="tab-content" id="tab4"> <!-- tab 凤凰 -->
+             <div class="notification information png_bg" id="infobox">
+                <div id="ifeng_addInfo">
+                    请填写以下内容。
+                </div>
+            </div>
+
+            <form action="/newssupportNew" method="post">
+
+                <fieldset>
+                    <input type="hidden" name="task" id="task" value="207"/>
+                    <table style="width:100%;">
+                        
+                        <tr>
+                            <td>
+                                 <label>任务名称</label>
+                            </td>
+                            <td>
+                               <input class="text-input medium-input datepicker" type="text" id="taskname" name="taskname" value="未命名新浪新闻支持任务" /> 
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                 <label>任务地址</label>
+                            </td>
+                             <td>
+                                 <input class="text-input large-input" type="text" id="url" name="url"/>
+
+                            </td>
+                        </tr>
+                         <tr>
+                            <td>
+                                 <label>评论内容</label>
+                            </td>
+                             <td>
+                                 <textarea class="text-input textarea wysiwyg" id="comment_content" name="comment_content"  rows="5"></textarea>
+
+                            </td>
+                        </tr>
+                       
+                        <tr>
+                            <td>
+                                <label>支持数量</label>
+                            </td>
+                             <td>
+                                 <input class="text-input small-input ui-state-error" type="text" id="sub_count" name="sub_count"  value="100"  />  <!-- Classes for input-notification: success, error, information, attention -->
+                        <span class="input-notification success png_bg">每次最大500次</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="button" id="ifeng_doSubmit">提交</div>
+                            </td>
+                              <td></td>
+                        </tr>
+                    </table>
+                  
+                    
+                     <input type="hidden"  id="task_type" value="901"/>
+                 <!--   <p>
+                        <label>执行方式</label>              
+                        <select name="task_type" class="small-input" id="task_type">
+
+                            <option value="901">精确调度</option>
+                            <option value="902">分发广播</option>
+
+                        </select> 
+                    </p>
+                 -->
+
+
+                </fieldset>
+            </form>
+        </div><!-- tab 凤凰 -->
+
+
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+<%- include ../../footer %>
