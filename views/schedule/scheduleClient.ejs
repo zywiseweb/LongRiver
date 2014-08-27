@@ -21,6 +21,7 @@
                 <tr>
                      <th>编号</th>
                     <th>地址</th>
+                    <th>位置</th>
                     <th>创建时间</th>
                     <th>最后读取时间</th>
                     <th>最后写入时间</th>
@@ -44,9 +45,11 @@
                 <tr>
                     <td><%= (i+1) %></td>
                     <td><%= clients[i].ip %></td>
+                     <td><%= clients[i].area %></td>
                     <td><%= clients[i].createTime %></td>
                     <td><%= clients[i].lastReadTime %></td>
                     <td><%= clients[i].lastWriteTime %></td>
+                   
                     </tr>
                 <% } %>
 

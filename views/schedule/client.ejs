@@ -1,0 +1,105 @@
+<%- include ../header %>
+
+
+<%- include ../body %>  
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>服务器信息</h3>
+        <ul class="content-box-tabs">
+
+
+        </ul>
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>IP地质</th>
+                    <th>地区</th>
+                    <th>版本</th>
+                    <th>状态</th>
+                    <th>是否登记</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+
+                        <div class="pagination">
+
+
+                            <%  var currtentPage = clients.currentPage ; %>
+                            <% if( currtentPage>2  ){%>
+                            <a href=<%= '/clientserver?p=1'%> >&laquo; 首页</a>
+                            <a href=<%= '/clientserver?p=' + currentPage-1  %> >&laquo; 前一页</a>
+                            <% } %>
+
+                            <% for(var i = 3 ; i>0; i-- ){
+                            if((currtentPage-i)>0){
+                            %>
+                            <a href="#" class="number" ><%= currtentPage-i %></a>
+                            <% }
+                            } %>
+                            <a href="#" class="number current"><%= currtentPage %></a>
+
+
+                            <% for(var i = 1 ; i<4; i++){
+                            if(currtentPage+i< clients.pageCount){
+                            %>
+                            <a href="#" class="number" ><%= currtentPage+i %></a>
+                            <% }
+                            } %>
+                            <% if( (clients.pageCount - clients.currentPage)>3){ %>
+                            <a href=<%= '/clientserver?p=' + clients.currentPage+1 %> >下一页 &raquo;</a>
+                            <a href=<%= '/clientserver?p=' + clients.pageCount %>  > 尾页 &raquo;</a>
+                            <% } %>
+
+
+                        </div> <!-- End .pagination -->
+                        <div class="clear"></div>
+                    </td>
+                </tr>
+            </tfoot>
+            <tbody>
+
+                <%  for(var i=0;i<clients.results.length;i++){ %>
+                <tr>
+                    <td><%= clients.results[i].ip %></td>
+                    <td><%= clients.results[i].areaName %></td>
+                    <td><%= clients.results[i].version %></td>
+                    <% if(clients.results[i].online){%>
+                    <td>在线</td>
+                    <% } else{ %>
+                     <td>离线</td>
+                    <% } %>
+                    <% if(clients.results[i].isRegisted){%>
+                    <td>已登记</td>
+                    <% } else{ %>
+                     <td>未登记</td>
+                    <% } %>
+                    
+                   
+                    </tr>
+                <% } %>
+
+
+
+
+                </tbodu>
+        </table>
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+
+
+
+
+<%- include ../footer %>

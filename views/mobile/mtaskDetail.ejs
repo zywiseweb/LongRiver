@@ -1,0 +1,90 @@
+<%- include ../header %>
+
+
+<%- include ../body %>  
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>任务信息</h3>
+        <ul class="content-box-tabs">
+
+            <li><a href="/userAdd" class="button" id="create-user" >添加任务</a></li> <!-- href must be unique and match the id of target div -->
+
+        </ul>
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>既定数量</th>
+                    <th>执行数量</th>
+                    <th>执行率</th>
+                    <th>任务状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+
+                        <div class="pagination">
+
+
+                            
+                             <% if( task.currentPage >1  ){%>
+                            <a class="number current" href=<%= '/mobilsupport?p=1'%> >首页</a>
+                            <a class="number current" href=<%= '/mobilsupport?p=' + (task.currentPage-1)  %> >前一页</a>
+                            <% } %>
+
+
+                            第<%= task.currentPage  %>页 (共 <%= task.pageCount %> 页）
+
+
+
+                            <% if( task.pageCount > task.currentPage){ %>
+                            <a class="number current" href=<%= '/mobilsupport?p=' + (task.currentPage+1) %> >下一页</a>
+                            <a class="number current" href=<%= '/mobilsupport?p=' + task.pageCount %>  > 尾页</a>
+                            <% } %>
+                            
+                        </div> <!-- End .pagination -->
+                        <div class="clear"></div>
+                    </td>
+                </tr>
+            </tfoot>
+            <tbody>
+
+                <%  for(var i=0;i<task.results.length;i++){ %>
+                <tr>
+                    <td><%= task.results[i].name %></td>
+                    <td><%= task.results[i].count %></td>
+                    <td><%= task.results[i].support_count %></td>
+                    <td><%= task.results[i].support_count/task.results[i].count %>%</td>
+                    <td><%= task.results[i].task_status %></td>
+                    <td>
+                        <!-- Icons -->
+                        
+                        <a href="/userdelete?id=<%= task.results[i].id %>" title="停止"><img src="images/icons/cross.png" alt="删除" /></a> 
+                    </td></tr>
+                <% } %>
+
+
+
+
+                </tbodu>
+        </table>
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+
+
+
+
+<%- include ../footer %>

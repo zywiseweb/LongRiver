@@ -25,32 +25,25 @@
                 <tr>
                     <td colspan="6">
                         <div class="pagination">
-                            <%  var currtentPage = role.currentPage ; %>
-                            <% if( currtentPage>2  ){%>
-                            <a href=<%= '/role?p=1'%> >&laquo; 首页</a>
-                            <a href=<%= '/role?p=' + currentPage-1  %> >&laquo; 前一页</a>
+                            
+
+                            
+                               
+                             <% if( role.currentPage >1  ){%>
+                            <a class="number current" href=<%= '/role?p=1'%> >首页</a>
+                            <a class="number current" href=<%= '/role?p=' + (role.currentPage-1)  %> >前一页</a>
                             <% } %>
 
-                            <% for(var i = 3 ; i>0; i-- ){
-                            if((currtentPage-i)>0){
-                            %>
-                            <a href="#" class="number" ><%= currtentPage-i %></a>
-                            <% }
-                            } %>
-                            <a href="#" class="number current"><%= currtentPage %></a>
+
+                            第<%= role.currentPage  %>页 (共 <%= role.pageCount %> 页）
 
 
-                            <% for(var i = 1 ; i<4; i++){
-                            if(currtentPage+i< role.pageCount){
-                            %>
-                            <a href="#" class="number" ><%= currtentPage+i %></a>
-                            <% }
-                            } %>
-                            <% if( (role.pageCount - role.currentPage)>3){ %>
-                            <a href=<%= '/role?p=' + role.currentPage+1 %> >下一页 &raquo;</a>
-                            <a href=<%= '/role?p=' + role.pageCount %>  > 尾页 &raquo;</a>
+
+                            <% if( role.pageCount > role.currentPage){ %>
+                            <a class="number current" href=<%= '/role?p=' + (role.currentPage+1) %> >下一页</a>
+                            <a class="number current" href=<%= '/role?p=' + role.pageCount %>  > 尾页</a>
                             <% } %>
-
+                            
 
                         </div> <!-- End .pagination -->
                         <div class="clear"></div>
