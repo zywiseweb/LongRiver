@@ -150,17 +150,9 @@ exports.addNewsSupportTask = function(req, addTaskCallback) {
     if (task === '304') {//网易新闻支持
         console.info("网易新闻支持");
         var url = req.body.url;
-        var min = 30;
-        var max = 60;
-        if (speed === '1') {
-            min = 15;
-            max = 30;
-        } else if (speed === '2') {
-            min = 30;
-            max = 60;
-        }
-        console.info(task + " " + name + " " + url + " " + speed + " " + count + " " + max + " " + min);
-        var time = 
+        var min = 20;
+        var max = 25;
+        
         newTask = {
             task_id: new Date().getTime(),
             task_type: task_type,
@@ -176,6 +168,7 @@ exports.addNewsSupportTask = function(req, addTaskCallback) {
             sub_schedule_count: 0,
             task_status: 0,
             foregroundID:1,
+            platformName:'网易',
             create_time: util.getCurrentTime()
         };
 
@@ -189,19 +182,7 @@ exports.addNewsSupportTask = function(req, addTaskCallback) {
 
         var min = 3;
         var max = 5;
-        if (speed === '1') {
-            min = 3;
-            max = 5;
-        } else if (speed === '2') {
-            min = 5;
-            max = 10;
-        } else if (speed === '3') {
-            min = 10;
-            max = 20;
-        } else if (speed === '4') {
-            min = 20;
-            max = 30;
-        }
+      
         console.info(task + " " + name + " " + url + " " + speed + " " + count + " " + max + " " + min);
         newTask = {
             task_id: new Date().getTime(),
@@ -221,7 +202,8 @@ exports.addNewsSupportTask = function(req, addTaskCallback) {
             sub_schedule_count: 0,
             task_status: 0,
             foregroundID:1,
-            create_time: util.getCurrentTime()
+            create_time: util.getCurrentTime(),
+             platformName:'搜狐'
         };
     }
     console.info(newTask);

@@ -117,11 +117,11 @@ var structure = [
                         text: '首页设置',
                         id: 141,
                         route: '/homeset'
-                        
+
                     }
                 ]
             }
-        
+
         ]
     },
     {
@@ -181,8 +181,97 @@ var structure = [
     {
         text: '引导系统',
         id: 4,
-        route: '/newscommmit',
-        sub: [
+        route: '/mytask',
+        sub: [{
+                text: '任务管理',
+                id: 40,
+                route: '/mytask',
+                sub: [
+                    {
+                        text: '我的任务',
+                        id: 401,
+                        route: '/mytask'
+
+                    },
+                    {
+                        text: '新建任务',
+                        id: 402,
+                        route: '/newtask',
+                        sub: [
+                            {
+                                text: '新闻评论',
+                                id: 4021,
+                                route: '',
+                                sub: [
+                                    {
+                                        text: '网易新闻评论',
+                                        id: 40211,
+                                        route: ''
+                                    }
+                                ]
+                            },
+                            {
+                                text: '新闻支持',
+                                id: 4022,
+                                route: '',
+                                sub: [
+                                    {
+                                        text: '网易新闻支持',
+                                        id: 40221,
+                                        route: ''
+                                    },
+                                    {
+                                        text: '新浪新闻支持',
+                                        id: 40222,
+                                        route: ''
+                                    },
+                                    {
+                                        text: '搜狐新闻支持',
+                                        id: 40223,
+                                        route: ''
+                                    },
+                                    {
+                                        text: '凤凰新闻支持',
+                                        id: 40224,
+                                        route: ''
+                                    }
+                                ]
+                            },
+                            {
+                                text: '微博直发',
+                                id: 4023,
+                                route: '',
+                                sub: []
+                            },
+                            {
+                                text: '微博评论',
+                                id: 4024,
+                                route: '',
+                                sub: []
+                            },
+                            {
+                                text: '微博转发',
+                                id: 4025,
+                                route: '',
+                                sub: []
+                            },
+                            {
+                                text: '论坛发帖',
+                                id: 4026,
+                                route: '',
+                                sub: []
+                            },
+                            {
+                                text: '论坛顶帖',
+                                id: 4027,
+                                route: '',
+                                sub: []
+                            }
+                        ]
+
+                    }
+                ]
+            },
             {
                 text: '新闻引导',
                 id: 41,
@@ -244,7 +333,30 @@ var structure = [
                     }, {
                         text: '新建支持任务',
                         id: 413,
-                        route: '/newssupportNew'
+                        route: '/newssupportNew',
+                        sub: [
+                            {
+                                id: 4131,
+                                text: '网易新闻',
+                                route: '/newssupport_163',
+                                image: ''
+                            }, {
+                                id: 4132,
+                                text: '新浪新闻',
+                                route: '/newssupport_sina',
+                                image: ''
+                            }, {
+                                id: 4133,
+                                text: '搜狐新闻',
+                                route: '/newssupport_sohu'
+                                , image: ''
+                            }, {
+                                id: 4134,
+                                text: '凤凰新闻',
+                                route: '/newssupport_ifeng',
+                                image: ''
+                            }
+                        ]
                     }
 
                 ]
@@ -398,11 +510,11 @@ var structure = [
                         text: '移动任务',
                         id: 811,
                         route: '/mobilesupport',
-                        sub:[
+                        sub: [
                             {
-                                text:'任务详情',
-                                id:8111,
-                                route:'/mobiletaskDetail'
+                                text: '任务详情',
+                                id: 8111,
+                                route: '/mobiletaskDetail'
                             }
                         ]
 
