@@ -1,12 +1,12 @@
 {
-  "name": "application-name",
+  "name": "hx",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.5.1",
+    "express": "3",
     "ejs": "*",
     "connect-flash": "*",
     "mongodb": "*",
@@ -15,6 +15,7 @@
     "passport-local": "*",
     "bcrypt": "*",
     "async":"*",
-    "mongoose-id-autoinc":"*"
+    "mongoose-id-autoinc":"*",
+    "request":"*"
   }
 }

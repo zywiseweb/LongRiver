@@ -15,9 +15,13 @@ var init = require('./system_modules/dao/initdb');
 var role = require('./system_modules/role/role');
 var userManager = require('./system_modules/user/user');
 var taskManager = require('./system_modules/task/task');
+var clientManager = require('./system_modules/client/client');
 var departmentManager = require('./system_modules/department/department');
 var util = require('./system_modules/util');
 var scheduleManager = require('./system_modules/schedule/schedule');
+var accountManager = require('./system_modules/account/account');
+var mobileManager = require('./system_modules/mobile/mobile');
+var logManager = require('./system_modules/log/logger');
 //*************************************
 /**
  * 认证部分
@@ -63,9 +67,14 @@ passport.use(new LocalStrategy(function(username, password, done) {
  * @returns {unresolved}
  */
 function ensureAuthenticated(req, res, next) {
+
     console.info("判断登陆:" + req.path);
     if (req.isAuthenticated()) {//判断登陆
+
         if (req.path === '/') {//首页
+            if (req.session.path && req.session.path !== '/') {
+                return res.redirect(req.session.path);
+            }
             //首先判断用户设定首页
             var home = req.session.user.homeRoute;
             if (home && home !== '/') {
@@ -103,10 +112,13 @@ function ensureAuthenticated(req, res, next) {
                     return res.redirect('/norole');
                 }
             });
+
+            //日志
         }
 
     } else {
         console.info("认证：需要登陆。");
+        req.session.path = req.path;
         return res.redirect('/login');
     }
 
@@ -469,6 +481,7 @@ app.get('/newssupport', ensureAuthenticated, function(req, res) {
 
     var page = req.query.p ? parseInt(req.query.p) : 1;
     var query = req.query.n ? {name: req.query.n} : null;
+    
     async.parallel([
         function(callback) {
             role.getMenu(req.path, req.session.role, callback);
@@ -476,7 +489,8 @@ app.get('/newssupport', ensureAuthenticated, function(req, res) {
         function(callback) {
             taskManager.findPagination(
                     {
-                        search: query,
+                        search: {},
+                        task:['304'],
                         columns: 'task_id name task sub_count sub_schedule_count create_time task_status',
                         num: page,
                         limit: 10
@@ -539,31 +553,39 @@ app.get('/scheduleClient', ensureAuthenticated, function(req, res) {
         }
 
     });
-});
-app.get('/scheduleErr', function(req, res) {
+}); 
+app.get('/accountsearch', ensureAuthenticated, function(req, res) {
+    
+    var page = req.query.p ? parseInt(req.query.p) : 1;
+    var key = req.query.key ? req.query.key : null;
+    var type = req.query.type ? req.query.type : null;
+    var status = req.query.status ? req.query.status : null;
+    var query = {key:key,type:type,status:status};
+    
     async.parallel([
         function(callback) {
             role.getMenu(req.path, req.session.role, callback);
+        },
+        function(callback) {
+            accountManager.findPagination(
+                    {
+                        search: query,
+                        columns: 'id username password createTime displayName platformName enable',
+                        num: page,
+                        limit: 10
+                    }, callback);
         }
     ], function(err, results) {
         if (err) {
             res.redirect('/err');
         } else {
-            res.render('schedule/timeout', {user: req.session.user, menu: results[0]});
+          //  console.info(results[1]);
+            res.render('account/search', {user: req.session.user, menu: results[0], accounts: results[1],key:key,platform:type,status:status});
         }
     });
 });
-//-- ----
-app.get('/sinasearch', ensureAuthenticated, function(req, res) {
-    async.parallel([
-        function(callback) {
-            role.getMenu(req.path, req.session.role, callback);
-        }
-    ]
-            , function(err, results) {
-                res.render('account/sina/search', {user: req.session.user, menu: results[0]});
-            });
-});
+
+
 app.get('/sinaloadin', ensureAuthenticated, function(req, res) {
     async.parallel([
         function(callback) {
@@ -654,6 +676,91 @@ app.get('/lrlog', ensureAuthenticated, function(req, res) {
         res.render('longriver/lrlog', {user: req.session.user, menu: results[0]});
     });
 });
+
+app.get('/mobilesupport', ensureAuthenticated, function(req, res) {
+
+
+
+    var page = req.query.p ? parseInt(req.query.p) : 1;
+    var query = req.query.n ? {name: req.query.n} : null;
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        },
+        function(callback) {
+            mobileManager.findPaginationForMobileTask(
+                    {
+                        search: query,
+                        columns: 'id name user_displayname  count support_count task_status create_time',
+                        num: page,
+                        limit: 10
+                    }, callback);
+        }
+    ], function(err, results) {
+        if (err) {
+            res.redirect('/err');
+        } else {
+            res.render('mobile/mtasklist', {user: req.session.user, menu: results[0], task: results[1]});
+        }
+    });
+});
+
+
+app.get('/mslist', ensureAuthenticated, function(req, res) {
+    async.parallel([
+        function(callback) {
+            role.getMenu(req.path, req.session.role, callback);
+        }
+    ], function(err, results) {
+        res.render('mobile/taskNew', {user: req.session.user, menu: results[0]});
+    });
+});
+
+
+app.post('/mslist', ensureAuthenticated, function(req, res) {
+    mobileManager.addNewsTask(req, function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send('1');
+        }
+    });
+});
+
+//////////////////////////////////////手机调用接口//////
+
+app.post('/MM', function(req, res) {
+    var imei = req.body.IMEI;
+    mobileManager.findOneTaskToMobile(function(re){
+      //  logManager.saveLog('mobile',imei+'查询任务:'+re.toString());
+        res.send(re);
+    });
+});
+
+app.get('/MM', function(req, res) {
+    var imei = req.query.IMEI;
+    mobileManager.findOneTaskToMobile(function(re){
+        logManager.saveLog('mobile',imei+'查询任务:'+re.toString());
+     //  console.info(re);
+        res.send(re);
+    });
+});
+app.post('/MR', function(req, res) {
+    var imei = req.body.IMEI;
+    var count = req.body.COUNT;
+    var id = req.body.ID;
+    
+     async.parallel([
+        function(callback) {
+           mobileManager.updateTaskFromMobile(id,count,callback);
+        }
+    ], function(err, results) {
+        res.send('');
+    });
+    
+    
+});
+
 //----------------------------
 app.get('/norole', function(req, res) {
     res.render('norole');
