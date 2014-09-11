@@ -57,10 +57,10 @@ var SubTaskManager = mongoose.model('subTask', subTaskSchema);
 
 //*******************暴露接口*******************
 
-exports.findTask = function(where, callback) {
+exports.findTask = function (where, callback) {
     TaskManager.findOne(where, callback);
 };
-exports.findSubTask = function(id, callback) {
+exports.findSubTask = function (id, callback) {
     SubTaskManager.find({task_id: id}, 'sub_id time status ip', callback);
 };
 /**
@@ -69,7 +69,7 @@ exports.findSubTask = function(id, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-exports.saveTask = function(task, callback) {
+exports.saveTask = function (task, callback) {
     if (!task) {
         callback('task is null');
     }
@@ -92,11 +92,11 @@ exports.saveTask = function(task, callback) {
  */
 
 function saveTask(task, callback) {
-    console.info(JSON.stringify(task) + "----------");
+    // console.info(JSON.stringify(task) + "----------");
     async.parallel([
-        function(callback) {//保持数据
+        function (callback) {//保持数据
             var newTask = new TaskManager(task);
-            newTask.save(function(err) {
+            newTask.save(function (err) {
                 if (err) {
                     callback(err, '保存错误');
                     console.log(err);
@@ -107,12 +107,12 @@ function saveTask(task, callback) {
             });
         }
         ,
-        function(callback) {//发送数据
+        function (callback) {//发送数据
             var str = JSON.stringify(task);
             console.info(str + "--");
             var d = "{\"content\":" + str + ",\"type\": 101}\r\n";
 
-            scheduleManager.sendCommand(d, function(err) {
+            scheduleManager.sendCommand(d, function (err) {
                 if (err) {
                     console.info("发送执行出错");
                 } else {
@@ -121,7 +121,7 @@ function saveTask(task, callback) {
                 callback(null);
             });
         }
-    ], function(err, results) {
+    ], function (err, results) {
         if (err) {
             callback(err);
         } else {
@@ -138,7 +138,7 @@ function saveTask(task, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-exports.findPagination = function(params, callback) {
+exports.findPagination = function (params, callback) {
     var q = params.search || {}; //查询调价
     var col = params.columns || {}; //字段
     // var task = params.task; //字段
@@ -163,12 +163,12 @@ exports.findPagination = function(params, callback) {
         query.where('task_status').in(params.status);
     }
 
-    query.exec(function(err, results) {
+    query.exec(function (err, results) {
 
         if (err) {
             callback(err, null);
         } else {
-            TaskManager.count(q, function(err, count) {
+            TaskManager.count(q, function (err, count) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -186,7 +186,7 @@ exports.findPagination = function(params, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-exports.addNewsSupportTask = function(req, addTaskCallback) {
+exports.addNewsSupportTask = function (req, addTaskCallback) {
     var newTask;
     var task = req.body.task;
     var speed = req.body.speed;
@@ -322,7 +322,7 @@ exports.addNewsSupportTask = function(req, addTaskCallback) {
         };
     }
     //  console.info(newTask);
-    this.saveTask(newTask, function(err) {
+    this.saveTask(newTask, function (err) {
         if (err) {
             addTaskCallback(err);
         } else {
@@ -333,18 +333,18 @@ exports.addNewsSupportTask = function(req, addTaskCallback) {
 
 
 
-exports.addNewsCommentTask = function(req, addTaskCallback) {
+exports.addNewsCommentTask = function (req, addTaskCallback) {
 
     var newTask;
     var task = req.body.task;
     var url = req.body.url;
     var schedule = req.body.schedule;
-    var count = req.body.sub_count;
     var name = req.body.taskname;
     var task_type = req.body.task_type;
-
-
-
+    var count = 0;
+    for (var i = 0; i < schedule.length; i++) {
+        count = count + parseInt(schedule[i].count);
+    }
     var task_id = new Date().getTime();
     var docContent = req.body.doc;
     var docContents = docContent.split(/\r?\n/);
@@ -361,8 +361,8 @@ exports.addNewsCommentTask = function(req, addTaskCallback) {
 
     }
     async.waterfall([
-        function(cb) {//保存语料
-            docManager.save(docs, function(err, ids) {
+        function (cb) {//保存语料
+            docManager.save(docs, function (err, ids) {
                 if (err) {
                     cb(err);
                 } else {
@@ -370,8 +370,8 @@ exports.addNewsCommentTask = function(req, addTaskCallback) {
                 }
             });
         },
-        function(n, cb) {//查询语料id
-            docManager.getIDsByTaskID(task_id, function(err, re) {
+        function (n, cb) {//查询语料id
+            docManager.getIDsByTaskID(task_id, function (err, re) {
                 if (err) {
                     cb(err);
                 } else {
@@ -379,7 +379,7 @@ exports.addNewsCommentTask = function(req, addTaskCallback) {
                 }
             });
         }, //组装对象
-        function(n, cb) {
+        function (n, cb) {
             var ids = [];
             for (var i = 0; i < n.length; i++) {
                 ids.push(n[i]._id.toString());
@@ -397,13 +397,8 @@ exports.addNewsCommentTask = function(req, addTaskCallback) {
                     doc: {
                         datas: ids.toString()
                     }
-                    //,
-                    //robot_url: "http://192.168.0.141/catRobot/cat.zip",
-                    //robot_file: "Library:/netease163_news_com.robot"
                 },
                 schedule: schedule,
-                // schedule_min: min,
-                // schedule_max: max,
                 need_schedule_times: 1,
                 sub_count: count,
                 sub_schedule_count: 0,
@@ -417,21 +412,22 @@ exports.addNewsCommentTask = function(req, addTaskCallback) {
                 newTask.platformName = "网易";
             }
 
-            var s = new Date(Date.parse(schedule[0].start_time.replace(/-/g, "/")));
-            var e = new Date(Date.parse(schedule[0].end_time.replace(/-/g, "/")));
-            var z = e.getTime() - s.getTime();
-            var min = z / count / 1000;
-            if (min < 10) {
-                newTask.schedule_min = 10;
-                newTask.schedule_max = 10;
-            } else {
-                newTask.schedule_min = min - min / 2;
-                newTask.schedule_max = min + min / 2;
-            }
+            /*
+             var s = new Date(Date.parse(schedule[0].start_time.replace(/-/g, "/")));
+             var e = new Date(Date.parse(schedule[0].end_time.replace(/-/g, "/")));
+             var z = e.getTime() - s.getTime();
+             var min = z / count / 1000;
+             if (min < 10) {
+             newTask.schedule_min = 10;
+             newTask.schedule_max = 10;
+             } else {
+             newTask.schedule_min = min - min / 2;
+             newTask.schedule_max = min + min / 2;
+             }*/
             cb(null, newTask);
         },
-        function(newTask, cb) {//添加机器人参数
-            robotManager.findRoborByTask(task, function(err, robot) {
+        function (newTask, cb) {//添加机器人参数
+            robotManager.findRoborByTask(task, function (err, robot) {
                 if (err) {
                     cb(err, null);
                 } else {
@@ -443,8 +439,8 @@ exports.addNewsCommentTask = function(req, addTaskCallback) {
                 }
             });
         }
-    ], function(err, result) {
-        saveTask(result, function(err) {
+    ], function (err, result) {
+        saveTask(result, function (err) {
             if (err) {
                 addTaskCallback(err);
             } else {
