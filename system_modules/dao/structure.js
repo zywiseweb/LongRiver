@@ -181,11 +181,11 @@ var structure = [
     {
         text: '引导系统',
         id: 4,
-        route: '/mytask',
+        route: 'mytask',
         sub: [{
                 text: '任务管理',
                 id: 40,
-                route: '/mytask',
+                route: '',
                 sub: [
                     {
                         text: '我的任务',
@@ -201,39 +201,62 @@ var structure = [
                             {
                                 text: '新闻评论',
                                 id: 4021,
-                                route: '',
+                                route: '/newsCommentNew',
                                 sub: [
                                     {
                                         text: '网易新闻评论',
                                         id: 40211,
-                                        route: ''
+                                        icons: '16348.png',
+                                        route: '/t303'
+                                    },
+                                    {
+                                        text: '新浪新闻评论',
+                                        id: 40212,
+                                        icons: 'sina48.png',
+                                        route: '/t206'
+                                    },
+                                    {
+                                        text: '搜狐新闻评论',
+                                        id: 40213,
+                                        icons: 'sohu48.png',
+                                        route: '/t403'
+                                    },
+                                    {
+                                        text: '凤凰新闻评论',
+                                        id: 40214,
+                                        icons: 'ifeng48.png',
+                                        route: '/t501'
                                     }
                                 ]
                             },
                             {
                                 text: '新闻支持',
                                 id: 4022,
-                                route: '',
+                                route: '/newssupportNew',
                                 sub: [
                                     {
                                         text: '网易新闻支持',
                                         id: 40221,
-                                        route: ''
+                                        icons: '16348.png',
+                                        route: '/t304'
                                     },
                                     {
                                         text: '新浪新闻支持',
                                         id: 40222,
-                                        route: ''
+                                        icons: 'sina48.png',
+                                        route: '/t207'
                                     },
                                     {
                                         text: '搜狐新闻支持',
                                         id: 40223,
-                                        route: ''
+                                        icons: 'sohu48.png',
+                                        route: '/t404'
                                     },
                                     {
                                         text: '凤凰新闻支持',
                                         id: 40224,
-                                        route: ''
+                                        icons: 'ifeng48.png',
+                                        route: '/t502'
                                     }
                                 ]
                             },
@@ -241,31 +264,116 @@ var structure = [
                                 text: '微博直发',
                                 id: 4023,
                                 route: '',
-                                sub: []
+                                sub: [
+                                    {
+                                        text: '腾讯微博直发',
+                                        id: 40231,
+                                        icons: 'qqweibo48.png',
+                                        route: '/t101'
+                                    },
+                                    {
+                                        text: '新浪微博直发',
+                                        id: 40232,
+                                        icons: 'weibo48.png',
+                                        route: '/t201'
+                                    }
+                                ]
                             },
                             {
                                 text: '微博评论',
                                 id: 4024,
                                 route: '',
-                                sub: []
+                                sub: [
+                                    {
+                                        text: '腾讯微博评论',
+                                        id: 40241,
+                                        icons: 'qqweibo48.png',
+                                        route: '/t102'
+                                    },
+                                    {
+                                        text: '新浪微博评论',
+                                        id: 40242,
+                                        icons: 'weibo48.png',
+                                        route: '/t202'
+                                    }
+                                ]
                             },
                             {
                                 text: '微博转发',
                                 id: 4025,
                                 route: '',
-                                sub: []
+                                sub: [
+                                    {
+                                        text: '腾讯微博评论',
+                                        id: 40251,
+                                        icons: 'qqweibo48.png',
+                                        route: '/t103'
+                                    },
+                                    {
+                                        text: '新浪微博评论',
+                                        id: 40252,
+                                        icons: 'weibo48.png',
+                                        route: '/t203'
+                                    }
+                                ]
                             },
                             {
                                 text: '论坛发帖',
                                 id: 4026,
                                 route: '',
-                                sub: []
+                                sub: [
+                                    {
+                                        text: '网易论坛发帖',
+                                        id: 40261,
+                                        icons: '16348.png',
+                                        route: '/t301'
+                                    },
+                                    {
+                                        text: '搜狐论坛发帖',
+                                        id: 40262,
+                                        icons: 'sohu48.png',
+                                        route: '/t401'
+                                    },
+                                    {
+                                        text: '新华论坛发帖',
+                                        id: 40263,
+                                        route: '/t601'
+                                    },
+                                    {
+                                        text: '强国论坛发帖',
+                                        id: 40264,
+                                        route: '/t701'
+                                    }
+                                ]
                             },
                             {
                                 text: '论坛顶帖',
                                 id: 4027,
                                 route: '',
-                                sub: []
+                                sub: [
+                                    {
+                                        text: '网易论坛顶帖',
+                                        id: 40271,
+                                        icons: '16348.png',
+                                        route: '/t302'
+                                    },
+                                    {
+                                        text: '搜狐论坛顶帖',
+                                        id: 40272,
+                                        icons: 'sohu48.png',
+                                        route: '/t402'
+                                    },
+                                    {
+                                        text: '新华论坛发帖',
+                                        id: 40273,
+                                        route: '/t602'
+                                    },
+                                    {
+                                        text: '强国论坛发帖',
+                                        id: 40274,
+                                        route: '/t602'
+                                    }
+                                ]
                             }
                         ]
 
@@ -330,35 +438,7 @@ var structure = [
                             }
                         ]
 
-                    }, {
-                        text: '新建支持任务',
-                        id: 413,
-                        route: '/newssupportNew',
-                        sub: [
-                            {
-                                id: 4131,
-                                text: '网易新闻',
-                                route: '/newssupport_163',
-                                image: ''
-                            }, {
-                                id: 4132,
-                                text: '新浪新闻',
-                                route: '/newssupport_sina',
-                                image: ''
-                            }, {
-                                id: 4133,
-                                text: '搜狐新闻',
-                                route: '/newssupport_sohu'
-                                , image: ''
-                            }, {
-                                id: 4134,
-                                text: '凤凰新闻',
-                                route: '/newssupport_ifeng',
-                                image: ''
-                            }
-                        ]
                     }
-
                 ]
             }
         ]
@@ -494,7 +574,38 @@ var structure = [
     {
         text: '资源库',
         id: 7,
-        route: '/resource'
+        route: '/resource',
+        sub: [{
+                text: '资源概况',
+                id: 71,
+                route: '/resource',
+                sub: [
+                    {
+                        text: '资源统计',
+                        id: 711,
+                        route: '/resource'
+                        
+                    }
+                ]
+            },
+            {
+                text: '机器人资源',
+                id: 72,
+                route: '/robots',
+                sub: [
+                    {
+                        text: '机器人管理',
+                        id: 721,
+                        route: '/robots'
+                    },
+                    {
+                        text: '上传机器人',
+                        id: 722,
+                        route: '/uploadRobots'
+                    }
+                ]
+            }
+        ]
     },
     {
         text: '移动支持',

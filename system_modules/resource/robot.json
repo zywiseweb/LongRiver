@@ -1,0 +1,38 @@
+[
+    {
+        "name":"网易新闻支持",
+	 "task":"303",
+	 "robot_url":"http://192.168.0.141/catRobot/cat.zip",
+	 "robot_file":"Library:/netease163_news_com.robot",
+         "enable":1,
+         "create_time":new Date().getTime(),
+	 "platformName":"网易"
+    },
+     {
+        "name":"新浪新闻支持",
+	 "task":"206",
+	 "robot_url":"http://192.168.0.141/catRobot/cat.zip",
+	 "robot_file":"Library:/sina_news_com.robot",
+         "enable":1,
+         "create_time":new Date().getTime(),
+	 "platformName":"新浪"
+    },
+     {
+        "name":"搜狐新闻支持",
+	 "task":"403",
+	 "robot_url":"http://192.168.0.141/catRobot/cat.zip",
+	 "robot_file":"Library:/shou_news_com.robot",
+         "enable":1,
+         "create_time":new Date().getTime(),
+	 "platformName":"搜狐"
+    },
+     {
+        "name":"凤凰新闻支持",
+	 "task":"501",
+	 "robot_url":"http://192.168.0.141/catRobot/cat.zip",
+	 "robot_file":"Library:/ifeng_news_com.robot",
+         "enable":1,
+         "create_time":new Date().getTime(),
+	 "platformName":"凤凰"
+    }
+]

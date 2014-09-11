@@ -1,5 +1,5 @@
 var mongoose = require('../database/mongodb');
-var bcrypt = require('bcrypt');
+//var bcrypt = require('bcrypt');
 var SALT_WORK_FACTOR = 11;
 var Schema = mongoose.Schema;
 
@@ -32,6 +32,7 @@ var userSchema = new Schema({
  * @param {type} param1
  * @param {type} param2
  */
+/*
 userSchema.pre('save', function(next) {
     var user = this;
 
@@ -50,19 +51,26 @@ userSchema.pre('save', function(next) {
         });
     });
 });
-
+*/
 /**
  * 密码认证
  * @param {type} candidatePassword
  * @param {type} cb
  * @returns {undefined}
  */
+       
 userSchema.methods.comparePassword = function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if(candidatePassword===this.password){
+         cb(null, true);
+    }else{
+       cb(null, false); 
+    }
+  /*  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
         if (err)
             return cb(err);
         cb(null, isMatch);
     });
+    */
 };
 
 //****************定义实体控制*******************

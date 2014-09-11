@@ -420,47 +420,7 @@ function getLeaf(access, ids) {
     }
 }
 ;
-/*
- exports.getNotSelected = function(all,selected) {
- var al = getIds(all);
- var sel = getIds(selected);
- var desel = [];
- for(var i=0;i<al.length;i++){
- if(sel.indexOf(al[i])<0){
- desel.push(al[i]);  
- }
- }
- return desel;
- };*/
-/**
- * 用户确认自权限是否可用
- * @param {type} access
- * @returns {undefined}
- */
-/*
- function chickAccess(access, ids) {
- if (access.sub && access.sub.length > 0) {
- var temp = [];
- for (var i = 0; i < access.sub.length; i++) {
- if (ids.indexOf(access.sub[i].id) > -1) {
- var subAccess = {
- id: access.sub[i].id,
- text: access.sub[i].text,
- route: access.sub[i].route,
- sub: []
- };
- temp.push(subAccess);
- subAccess.sub = chickAccess(access.sub[i], ids);
- }
- }
- //  console.info(temp);
- return temp;
- } else {
- return [];
- }
- }
- ;
- */
+
 
 /**
  * 
@@ -476,6 +436,36 @@ exports.getLeafID = function(role) {
 
     return ids;
 };
+
+/**
+ * 获得执行指定路由的登记的，子权限
+ * @param {type} route 路由
+ * @param {type} role 权限对象  获得一级一下的 
+ * @param {type} level  层级
+ * @returns {undefined}
+ */
+
+exports.getSubRoleByRoute = function(route, role, level, callback) {
+    callback(null, getSub(route, role.access, level));
+};
+
+function getSub(route, access, level) {
+    if (level === 0) {
+        for (var i = 0; i < access.length; i++) {
+            if (route === access[i].route) {
+                return access[i].sub;
+            }
+        }
+        return null;
+    } else {
+        for (var i = 0; i < access.length; i++) {
+            var subs = getSub(route, access[i].sub, level - 1);
+            if (subs ) {
+               return subs; 
+            }
+        }
+    }
+}
 /**
  * 递归方法 获取权限ID
  * 获得权限树叶子点
