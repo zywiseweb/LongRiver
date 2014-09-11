@@ -1,0 +1,205 @@
+<%- include ../header %>
+<script>
+    $(function() {
+//-------------网易新闻-------------------
+        var name = $("#taskname");
+        var url = $("#url");
+        var sub_count = $("#sub_count");
+        var content = $("#comment_content");
+        var allFields = $([]).add(name).add(url).add(sub_count).add(content);
+        var info = $("#addInfo");
+        var infobox = $("#infobox");
+     var urlRegex ="^((http)?://)?.*ifeng\.com.*";   
+        
+        $("#doSubmit").click(function() {
+
+            var bValid = true;
+            allFields.removeClass("ui-state-error");
+            bValid = bValid && checkLength(name, "任务名称", 1, 200);
+            bValid = bValid && checkLength(url, "任务地址", 1, 500);
+            bValid = bValid && checkLength(url, "评论内容", 1, 500);
+            bValid = bValid && checkRegexp(url, new RegExp(urlRegex), "地址格式有误。");
+            bValid = bValid && checkRegexp(sub_count, /^[0-9]*$/, "请输入正确数量。");
+            if (sub_count.val() < 1) {
+                updateTips("数量必须大于0.");
+                bValid = bValid && false;
+            }
+            if (sub_count.val() > 500) {
+                updateTips("数量必须小于500.");
+                bValid = bValid && false;
+            }
+            if (bValid) {
+                console.info("keyitijiao");
+                var param = {
+                    task: $("#task").val(),
+                    taskname: name.val(),
+                    url: url.val(),
+                    comment_content:$("#comment_content ").val(),
+                    sub_count: sub_count.val(),
+                    task_type: $("#task_type").val()
+
+                };
+                updateTips2("正在提交，请稍后...");
+                $("#duSubmit").hide();
+                
+                $.ajax({
+                    type: 'POST',
+                    url: "/newssupportNew",
+                    data: param,
+                    dataType: "text",
+                    success: function(text) {
+                        console.info(text);
+                        if (text === '1') {
+                            updateTips2("添加成功,页面即将调换到列表页。");
+                            setTimeout(function() {
+                                location.href = "/mytask";
+                            }, 1000);
+
+                        } else {
+                            updateTips2(text + 'a');
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus) {
+                        updateTips("添加出错了，请稍后再试。");
+                    }
+                });
+            }
+
+        });
+
+        function updateTips(t) {
+            infobox.removeClass("information");
+            infobox.addClass("error");
+            info.text(t);
+            setTimeout(function() {
+                infobox.removeClass("error");
+                infobox.addClass("information");
+            }, 2000);
+        }
+       
+        //--------------------------
+        function updateTips2(t) {
+            info.text(t);
+        }
+
+        function checkLength(o, n, min, max) {
+            if (o.val().length > max || o.val().length < min) {
+                o.addClass("ui-state-error");
+                updateTips(n + " 内容长度有误");
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkRegexp(o, regexp, n) {
+            if (!(regexp.test(o.val()))) {
+
+                updateTips(n);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    });
+
+
+</script>
+
+
+<%- include ../body %>  
+<div class="notification information png_bg" id="infobox">
+                <div id="addInfo">
+                    请填写以下内容。
+                </div>
+            </div>
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>创建凤凰新闻支持</h3>
+        
+
+
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+     
+
+            <form action="/newssupportNew" method="post">
+
+                <fieldset>
+                    <input type="hidden" name="task" id="task" value="502"/>
+                    <table style="width:100%;">
+                        
+                        <tr>
+                            <td>
+                                 <label>任务名称</label>
+                            </td>
+                            <td>
+                               <input class="text-input medium-input datepicker" type="text" id="taskname" name="taskname" value="未命名凤凰新闻支持任务" /> 
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                 <label>任务地址</label>
+                            </td>
+                             <td>
+                                 <input class="text-input large-input" type="text" id="url" name="url"/>
+
+                            </td>
+                        </tr>
+                         <tr>
+                            <td>
+                                 <label>评论内容</label>
+                            </td>
+                             <td>
+                                 <textarea class="text-input textarea wysiwyg" id="comment_content" name="comment_content"  rows="5"></textarea>
+
+                            </td>
+                        </tr>
+                       
+                        <tr>
+                            <td>
+                                <label>支持数量</label>
+                            </td>
+                             <td>
+                                 <input class="text-input small-input ui-state-error" type="text" id="sub_count" name="sub_count"  value="100"  />  <!-- Classes for input-notification: success, error, information, attention -->
+                        <span class="input-notification success png_bg">每次最大500次</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="button" id="doSubmit">提交</div>
+                            </td>
+                              <td></td>
+                        </tr>
+                    </table>
+                  
+                    
+                     <input type="hidden"  id="task_type" value="902"/>
+                 <!--   <p>
+                        <label>执行方式</label>              
+                        <select name="task_type" class="small-input" id="task_type">
+
+                            <option value="901">精确调度</option>
+                            <option value="902">分发广播</option>
+
+                        </select> 
+                    </p>
+                 -->
+
+
+                </fieldset>
+            </form>
+
+
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+<%- include ../footer %>

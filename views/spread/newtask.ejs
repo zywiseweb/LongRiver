@@ -1,82 +1,36 @@
 <%- include ../header %>
 
-<%- include ../body %>  
-<ul class="shortcut-buttons-set">
-				
-				<li><a class="shortcut-button" href="/newssupportNew"><span>
-					<img src="images/icons/pencil_48.png" alt="icon" /><br />
-					新建新闻支持
-				</span></a></li>
-				<% if(false){%>
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/paper_content_pencil_48.png" alt="icon" /><br />
-					Create  Page
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/image_add_48.png" alt="icon" /><br />
-					Upload an Image
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/clock_48.png" alt="icon" /><br />
-					Add an Event
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#messages" rel="modal"><span>
-					<img src="images/icons/comment_48.png" alt="icon" /><br />
-					Open Modal
-				</span></a></li>
-                                <li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/pencil_48.png" alt="icon" /><br />
-					Write an Article
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/paper_content_pencil_48.png" alt="icon" /><br />
-					Create  Page
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/image_add_48.png" alt="icon" /><br />
-					Upload an Image
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/clock_48.png" alt="icon" /><br />
-					Add an Event
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#messages" rel="modal"><span>
-					<img src="images/icons/comment_48.png" alt="icon" /><br />
-					Open Modal
-				</span></a></li>
-                                <li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/pencil_48.png" alt="icon" /><br />
-					Write an Article
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/paper_content_pencil_48.png" alt="icon" /><br />
-					Createa  Page
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/image_add_48.png" alt="icon" /><br />
-					Upload an Image
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#"><span>
-					<img src="images/icons/clock_48.png" alt="icon" /><br />
-					Add an Event
-				</span></a></li>
-				
-				<li><a class="shortcut-button" href="#messages" rel="modal"><span>
-					<img src="images/icons/comment_48.png" alt="icon" /><br />
-					Open Modal
-				</span></a></li>
-                                <% }%>
-				
-			</ul><!-- End .shortcut-buttons-set -->
 
+<%- include ../body %>  
+<!-- Start Content Box -->
+<% for(var i=0;i<list.length;i++){ %>
+    <% if(list[i].sub.length>0){%>
+   
+    <div class="title_2 " >
+        <div >
+          <h4><%= list[i].text %></h4>
+        </div>
+    </div>
+     
+    <ul class="shortcut-buttons-set">
+        <% for(var j=0;j<list[i].sub.length;j++){ %>
+                <li><a class="shortcut-button" href="<%=  list[i].sub[j].route %>">
+                        <span>
+                    <% if(list[i].sub[j].icons){%>
+                    <img src="<%= 'images/icons/'+list[i].sub[j].icons%>" alt="icon" />
+                    <% }else{ %>
+                    <img src="images/icons/ifeng48.png" alt="icon" />
+                    <% } %>
+                    <br />
+                    <%= list[i].sub[j].text %>
+                   
+                </span></a></li>
+        <% } %>
+    </ul><!-- End .shortcut-buttons-set -->
+<div class="clear"></div>
+         
+<% } %>
+<% }%>
+
+   
 <%- include ../footer %>

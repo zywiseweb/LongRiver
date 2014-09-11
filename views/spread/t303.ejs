@@ -1,0 +1,197 @@
+<%- include ../header %>
+<script src="javascripts/jquery-ui-timepicker-addon.js"></script>
+<script>
+    $(function() {
+//-------------网易新闻-------------------
+        var name = $("#taskname");
+        var url = $("#url");
+        var doc = $("#doc");
+        var sub_count = $("#sub_count");
+        var allFields = $([]).add(name).add(url).add(doc);
+
+        var info = $("#163_addInfo");
+        var infobox = $("#infobox");
+        var urlRegex = "^((http)?://)?comment\\.[0-9a-z_!~*'().&=+$%-]+\\.163\.com/.*/[0-9A-Z]+/[0-9A-Z]+\.html.#";
+        $("#doSubmit").click(function() {
+            var bValid = true;
+
+            allFields.removeClass("ui-state-error");
+            bValid = bValid && checkLength(name, "任务名称", 1, 200);
+            bValid = bValid && checkLength(url, "任务地址", 1, 200);
+            // bValid = bValid && checkRegexp(url, new RegExp(urlRegex), "地址格式有误。");
+            bValid = bValid && checkRegexp(sub_count, /^[0-9]*$/, "请输入正确数量。");
+            if (sub_count.val() < 1) {
+                updateTips("数量必须大于0.");
+                bValid = bValid && false;
+            }
+            if (sub_count.val() > 100) {
+                updateTips("数量必须小于100.");
+                bValid = bValid && false;
+            }
+            if (doc.val() <= 100) {
+                updateTips("语料为空.");
+                bValid = bValid && false;
+            }
+            if (bValid) {
+                var param = {
+                    task: $("#task").val(),
+                    taskname: name.val(),
+                    url: url.val(),
+                    sub_count: sub_count.val(),
+                    task_type: $("#task_type").val(),
+                    schedule: [{
+                            start_time: $("#startTime").val(),
+                            end_time: $("#endTime").val(),
+                            count: sub_count.val()
+                        }],
+                    doc: $("#doc").val()
+
+                };
+                updateTips2("正在提交，请稍后...");
+                $("#duSubmit").hide();
+                $.ajax({
+                    type: 'POST',
+                    url: "/newsCommentNew",
+                    data: param,
+                    dataType: "text",
+                    success: function(text) {
+                        console.info(text);
+                        if (text === '1') {
+                            updateTips2("添加成功,页面即将调换到列表页。");
+                            setTimeout(function() {
+                                  location.href = "/mytask";
+                            }, 1000);
+                        } else {
+                            updateTips2(text);
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus) {
+                        updateTips("添加出错了，请稍后再试。");
+                    }
+                });
+            }
+
+        });
+        function updateTips(t) {
+            infobox.removeClass("information");
+            infobox.addClass("error");
+            info.text(t);
+            setTimeout(function() {
+                infobox.removeClass("error");
+                infobox.addClass("information");
+            }, 2000);
+        }
+
+
+        //--------------------------
+        function updateTips2(t) {
+            info.text(t);
+        }
+
+        function checkLength(o, n, min, max) {
+            if (o.val().length > max || o.val().length < min) {
+                o.addClass("ui-state-error");
+                updateTips(n + " 输入有误");
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkRegexp(o, regexp, n) {
+            if (!(regexp.test(o.val()))) {
+
+                updateTips(n);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        $(".datepicker").datetimepicker({dateFormat: "yy-mm-dd"});
+        var date = new Date();
+        var d = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
+        $("#startTime").val(d);
+        date.setHours(date.getHours() + 1);
+        var d = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
+        $("#endTime").val(d);
+
+
+
+
+    });
+
+
+
+</script>
+
+
+<%- include ../body %>  
+
+<div class="notification information png_bg" id="infobox">
+    <div id="163_addInfo">
+        请填写以下内容。
+    </div>
+</div>
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>创建网易新闻支持任务</h3>
+        <ul class="content-box-tabs">
+            <li><a href="/newtask" class="button">返回</a></li> <!-- href must be unique and match the id of target div -->
+        </ul>
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+
+
+
+        <form action="/#" >
+            <fieldset>
+                <input type="hidden" name="task" id="task" value="303"/>
+                <input type="hidden"  id="task_type" value="901"/>
+                <p>
+                    <label>任务名称</label>
+                    <input class="text-input small-input" type="text" id="taskname" name="small-input" value="未命名网新评论任务" /> <!-- Classes for input-notification: success, error, information, attention -->
+                </p>
+
+                <p>
+                    <label>新闻连接</label>
+                    <input class="text-input medium-input" type="text" id="url" name="medium-input" /> <span class="input-notification information png_bg">输入网站地址</span>
+                </p>
+
+
+
+                <p>
+                    <label>评论语料</label>
+                    <textarea class="text-input textarea wysiwyg" id="doc" name="textfield" cols="79" rows="10"></textarea>
+                    <br /><small>每一个换行为一条语料</small>
+
+                </p>
+                <p>
+                    <label>执行控制</label> 
+                    从<input type="text" id="startTime"  placeholder="开始时间"  class="text-input datepicker">  
+                    至<input type="text" id="endTime"  placeholder="结束时间"  class="text-input datepicker">时间段内,执行<input type="text" placeholder="评论次数" id="sub_count" class="text-input">次评论
+                </p>
+
+
+                <p>
+                <div class="button" id="doSubmit">&nbsp &nbsp 提交 &nbsp &nbsp</div>
+                </p>
+
+
+
+            </fieldset>
+        </form>
+
+
+
+
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+<%- include ../footer %>

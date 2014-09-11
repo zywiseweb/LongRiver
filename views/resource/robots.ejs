@@ -1,0 +1,81 @@
+<%- include ../header %>
+
+<%- include ../body %>  
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>机器人信息</h3>
+       
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>下载地址</th>
+                    <th>机器人路径</th>
+                    <th>状态</th>
+                    
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+
+                        <div class="pagination">
+
+
+                            
+                             <% if( robots.currentPage >1  ){%>
+                            <a class="number current" href=<%= '/robots?p=1'%> >首页</a>
+                            <a class="number current" href=<%= '/robots?p=' + (robots.currentPage-1)  %> >前一页</a>
+                            <% } %>
+
+
+                            第<%= robots.currentPage  %>页 (共 <%= robots.pageCount %> 页）
+
+
+
+                            <% if( robots.pageCount > robots.currentPage){ %>
+                            <a class="number current" href=<%= '/robots?p=' + (robots.currentPage+1) %> >下一页</a>
+                            <a class="number current" href=<%= '/robots?p=' + robots.pageCount %>  > 尾页</a>
+                            <% } %>
+                            
+                        </div> <!-- End .pagination -->
+                        <div class="clear"></div>
+                    </td>
+                </tr>
+            </tfoot>
+            <tbody>
+
+                <%  for(var i=0;i<robots.results.length;i++){ %>
+                <tr>
+                    <td><%= robots.results[i].name %></td>
+                    <td><%= robots.results[i].robot_url %></td>
+                    <td><%= robots.results[i].robot_file %></td>
+                    <%if(robots.results[i].enable===1){ %>
+                    <td><img src="images/icons/enable.png" alt="可用" /></td>
+                    <% }else{ %>
+                    <td><img src="images/icons/error.png" alt="不可用" /></td>
+                    <% }%>
+                   <!--  <td>
+                        Icons 
+                        <a href="/userEdit?id=<%= robots.results[i].id %>" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
+                        <a href="/userdelete?id=<%= robots.results[i].id %>" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
+                    </td>--></tr>
+                <% } %>
+
+
+
+
+                </tbodu>
+        </table>
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+<%- include ../footer %>
