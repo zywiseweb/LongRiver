@@ -47,6 +47,11 @@ var structure = [
                                 id: 1112,
                                 text: '编辑账号',
                                 route: '/userEdit'
+                            }
+                            , {
+                                id: 1113,
+                                text: '密码重置',
+                                route: '/passwordReset'
                             }]
                     },
                     {
@@ -109,7 +114,7 @@ var structure = [
                 ]
             },
             {
-                text: '首页设置',
+                text: '基本设置',
                 id: 14,
                 route: '/homeset',
                 sub: [
@@ -117,6 +122,12 @@ var structure = [
                         text: '首页设置',
                         id: 141,
                         route: '/homeset'
+
+                    },
+                    {
+                        text: '显示设置',
+                        id: 142,
+                        route: '/displaySet'
 
                     }
                 ]
@@ -178,6 +189,7 @@ var structure = [
             }
         ]
     },
+    //引导系统
     {
         text: '引导系统',
         id: 4,
@@ -190,14 +202,45 @@ var structure = [
                     {
                         text: '我的任务',
                         id: 401,
-                        route: '/mytask'
-
+                        route: '/mytask',
+                        sub: [
+                            {
+                                text: '任务信息',
+                                id: 4011,
+                                route: '/taskInfo'
+                            }, {
+                                id: 4012,
+                                text: '停止',
+                                route: '/taskstop'
+                            }, {
+                                id: 4013,
+                                text: '开始',
+                                route: '/taskstart'
+                            }, {
+                                id: 4014,
+                                text: '放弃',
+                                route: '/taskcancel'
+                            }
+                        ]
                     },
                     {
                         text: '新建任务',
                         id: 402,
                         route: '/newtask',
                         sub: [
+                            {
+                                text: '通用任务',
+                                id: 4020,
+                                route: '/newsCommentNew',
+                                sub: [
+                                    {
+                                        text: 'HTTP请求',
+                                        id: 40201,
+                                        route: '/httprequest'
+                                    }
+                                ]
+
+                            },
                             {
                                 text: '新闻评论',
                                 id: 4021,
@@ -381,35 +424,23 @@ var structure = [
                 ]
             },
             {
-                text: '新闻引导',
+                text: '引导项目',
                 id: 41,
-                route: '/newscommmit',
+                route: '/progect',
                 sub: [
                     {
-                        text: '新闻评论',
+                        text: '项目管理',
                         id: 411,
-                        route: '/newscommmit',
+                        route: '/progect',
                         sub: [
                             {
                                 id: 4111,
                                 text: '详情',
-                                route: '/newscommmitdetail'
+                                route: '/progectdetail'
                             }, {
                                 id: 4112,
                                 text: '删除',
-                                route: '/newscommmitdetele'
-                            }, {
-                                id: 4113,
-                                text: '停止',
-                                route: '/newscommmitstop'
-                            }, {
-                                id: 4114,
-                                text: 'start',
-                                route: '/newscommmitstart'
-                            }, {
-                                id: 4115,
-                                text: '新建',
-                                route: '/newscommmitNew'
+                                route: '/progectdetele'
                             }
                         ]
 
@@ -584,7 +615,7 @@ var structure = [
                         text: '资源统计',
                         id: 711,
                         route: '/resource'
-                        
+
                     }
                 ]
             },
@@ -607,6 +638,7 @@ var structure = [
             }
         ]
     },
+    //移动支持
     {
         text: '移动支持',
         id: 8,
@@ -664,7 +696,50 @@ var structure = [
 
             }
         ]
+    },
+    //任务系统
+    {
+        text: '任务系统',
+        id: 9,
+        route: '/myjobs',
+        sub: [
+            {
+                text: '我的任务',
+                id: 91,
+                route: '/myjobs',
+                sub: [
+                    {
+                        text: '接收的任务',
+                        id: 911,
+                        route: '/getjobs'
+                    },
+                    {
+                        text: '下达的任务',
+                        id: 912,
+                        route: '/sendjobs'
+                    },
+                    {
+                        text: '任务统计',
+                        id: 913,
+                        route: '/jobsStatistics'
+                    }
+                ]
+
+            },
+             {
+                text: '任务统计',
+                id: 92,
+                route: '/jobsStatistics',
+                sub: [
+                    {
+                        text: '任务统计',
+                        id: 921,
+                        route: '/jobsStatistics'
+                    }
+                ]
+
+            }
+        ]
     }
 ];
-
 module.exports = structure;
