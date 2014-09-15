@@ -1,5 +1,6 @@
 //系统的模块结构
 var structure = [
+    //个人信息
     {
         text: '个人空间',
         id: 2,
@@ -20,10 +21,24 @@ var structure = [
                         route: '/changepassword'
                     }
                 ]
+            },
+            {
+                text: '信息',
+                id: 22,
+                route: '/messageBox',
+                sub: [
+                    {
+                        text: '系统信息',
+                        id: 211,
+                        route: '/systemMessage'
+                    }
+                ]
             }
+
 
         ]
     },
+    //系统管理
     {
         text: '系统管理',
         id: 1,
@@ -135,66 +150,14 @@ var structure = [
 
         ]
     },
-    {
-        text: '账号管理',
-        id: 3,
-        route: '/accountsearch',
-        sub: [
-            {
-                text: '账号管理',
-                id: 31,
-                route: '',
-                sub: [
-                    {
-                        text: '账号查询',
-                        id: 311,
-                        route: '/accountsearch',
-                        sub: [
-                            {
-                                text: '账号详情',
-                                id: 3111,
-                                route: '/accountdetail'
-                            },
-                            {
-                                text: '账号删除',
-                                id: 3112,
-                                route: '/accountdetele'
-                            },
-                            {
-                                text: '账号编辑',
-                                id: 3113,
-                                route: '/accountEdit'
-                            }
-                        ]
-                    },
-                    {
-                        text: '账号导入',
-                        id: 312,
-                        route: '/accountloadin'
-                    }
-                ]
-            },
-            {
-                text: '账号统计',
-                id: 32,
-                route: '',
-                sub: [
-                    {
-                        text: '类型统计',
-                        id: 321,
-                        route: '/accountstatistics'
-                    }
-
-                ]
-            }
-        ]
-    },
     //引导系统
     {
         text: '引导系统',
         id: 4,
         route: 'mytask',
-        sub: [{
+        sub: [
+            //任务管理
+            {
                 text: '任务管理',
                 id: 40,
                 route: '',
@@ -228,19 +191,6 @@ var structure = [
                         id: 402,
                         route: '/newtask',
                         sub: [
-                            {
-                                text: '通用任务',
-                                id: 4020,
-                                route: '/newsCommentNew',
-                                sub: [
-                                    {
-                                        text: 'HTTP请求',
-                                        id: 40201,
-                                        route: '/httprequest'
-                                    }
-                                ]
-
-                            },
                             {
                                 text: '新闻评论',
                                 id: 4021,
@@ -417,12 +367,26 @@ var structure = [
                                         route: '/t602'
                                     }
                                 ]
+                            },
+                            {
+                                text: '通用任务',
+                                id: 4027,
+                                route: '/newsCommentNew',
+                                sub: [
+                                    {
+                                        text: 'HTTP请求',
+                                        id: 40271,
+                                        route: '/httprequest'
+                                    }
+                                ]
+
                             }
                         ]
 
                     }
                 ]
             },
+            //项目管理
             {
                 text: '引导项目',
                 id: 41,
@@ -471,10 +435,18 @@ var structure = [
 
                     }
                 ]
+            },
+            //任务统计
+            {
+                text: '任务统计',
+                id: 42,
+                route: '/taskstatistics'
             }
+
         ]
 
     },
+    //调度系统
     {
         text: '调度系统',
         id: 5,
@@ -533,75 +505,78 @@ var structure = [
             }
         ]
     },
-    {
-        text: '长河监控',
-        id: 6,
-        route: '/lrstatus',
-        sub: [
-            {
-                text: '系统状态',
-                id: 61,
-                route: '/lrstatus'
-
-            },
-            {
-                text: '新浪账号状态',
-                id: 62,
-                route: '/lrsinaAccount',
-                sub: [
-                    {
-                        text: '账号分布',
-                        id: 621,
-                        route: '/lrsinaAccount'
-
-                    },
-                    {
-                        text: '24小时账号变化',
-                        id: 622,
-                        route: '/lrsinaAccount24'
-
-                    }
-                ]
-            },
-            {
-                text: '任务统计',
-                id: 63,
-                route: '/lrmiss',
-                sub: [
-                    {
-                        text: '任务执行分布',
-                        id: 631,
-                        route: '/lrmiss'
-
-                    },
-                    {
-                        text: '30天任务统计',
-                        id: 632,
-                        route: '/lrmiss30'
-
-                    },
-                    {
-                        text: '7天任务执行量',
-                        id: 633,
-                        route: '/lrmiss7'
-
-                    },
-                    {
-                        text: '单个任务执行情况',
-                        id: 634,
-                        route: '/lrmissOne'
-
-                    }
-                ]
-            },
-            {
-                text: '日志查询',
-                id: 64,
-                route: '/lrlog'
-
-            }
-        ]
-    },
+    /*
+     {
+     text: '长河监控',
+     id: 6,
+     route: '/lrstatus',
+     sub: [
+     {
+     text: '系统状态',
+     id: 61,
+     route: '/lrstatus'
+     
+     },
+     {
+     text: '新浪账号状态',
+     id: 62,
+     route: '/lrsinaAccount',
+     sub: [
+     {
+     text: '账号分布',
+     id: 621,
+     route: '/lrsinaAccount'
+     
+     },
+     {
+     text: '24小时账号变化',
+     id: 622,
+     route: '/lrsinaAccount24'
+     
+     }
+     ]
+     },
+     {
+     text: '任务统计',
+     id: 63,
+     route: '/lrmiss',
+     sub: [
+     {
+     text: '任务执行分布',
+     id: 631,
+     route: '/lrmiss'
+     
+     },
+     {
+     text: '30天任务统计',
+     id: 632,
+     route: '/lrmiss30'
+     
+     },
+     {
+     text: '7天任务执行量',
+     id: 633,
+     route: '/lrmiss7'
+     
+     },
+     {
+     text: '单个任务执行情况',
+     id: 634,
+     route: '/lrmissOne'
+     
+     }
+     ]
+     },
+     {
+     text: '日志查询',
+     id: 64,
+     route: '/lrlog'
+     
+     }
+     ]
+     },
+     */
+    //资源库
     {
         text: '资源库',
         id: 7,
@@ -616,6 +591,45 @@ var structure = [
                         id: 711,
                         route: '/resource'
 
+                    }
+                ]
+            },
+            {
+                text: '账号管理',
+                id: 31,
+                route: '',
+                sub: [
+                    {
+                        text: '账号查询',
+                        id: 311,
+                        route: '/accountsearch',
+                        sub: [
+                            {
+                                text: '账号详情',
+                                id: 3111,
+                                route: '/accountdetail'
+                            },
+                            {
+                                text: '账号删除',
+                                id: 3112,
+                                route: '/accountdetele'
+                            },
+                            {
+                                text: '账号编辑',
+                                id: 3113,
+                                route: '/accountEdit'
+                            }
+                        ]
+                    },
+                    {
+                        text: '账号导入',
+                        id: 312,
+                        route: '/accountloadin'
+                    },
+                    {
+                        text: '账号统计',
+                        id: 313,
+                        route: '/accountstatistics'
                     }
                 ]
             },
@@ -726,7 +740,7 @@ var structure = [
                 ]
 
             },
-             {
+            {
                 text: '任务统计',
                 id: 92,
                 route: '/jobsStatistics',
@@ -739,6 +753,53 @@ var structure = [
                 ]
 
             }
+        ]
+    },
+    //追踪系统
+    {
+        text: '追踪系统',
+        id: 10,
+        route: '/track',
+        sub: [
+            {
+                text: '追踪任务',
+                id: 101,
+                route: '/trackTask',
+                sub: [
+                    {
+                        text: '任务列表',
+                        id: 1011,
+                        route: '/trackTask',
+                        sub: [
+                            {
+                                text: '删除追踪',
+                                id: 10111,
+                                route: '/deletetrack'
+                               
+                            },
+                            {
+                                text: '停止追踪',
+                                id: 10112,
+                                route: '/sotptrack'
+                                
+                            },
+                            {
+                                text: '开始追踪',
+                                id: 10113,
+                                route: '/starttrack'
+                               
+                            },
+                            {
+                                text: '追踪报表',
+                                id: 10114,
+                                route: '/trackreport'
+                               
+                            }
+                        ]
+                    }
+                ]
+            }
+
         ]
     }
 ];
