@@ -11,6 +11,7 @@ var schedule = require('./schedule');
 var mobile = require('./mobile');
 var longRiver = require('./longRiver');
 var resource = require('./resource');
+var gather = require('./gather');
 
 exports.route = function(app,ensureAuthenticated) {
 
@@ -37,6 +38,9 @@ exports.route = function(app,ensureAuthenticated) {
     longRiver.route(app, ensureAuthenticated);
     //资源系统
     resource.route(app, ensureAuthenticated);
+    
+    /***********无状态 服务******************************/
+    gather.route(app);
     
     //错误处理
      err.route(app, ensureAuthenticated);
