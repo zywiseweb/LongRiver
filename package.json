@@ -16,6 +16,7 @@
     "bcrypt": "*",
     "async":"*",
     "mongoose-id-autoinc":"*",
-    "request":"*"
+    "request":"*",
+    "cheerio":"*"
   }
 }
