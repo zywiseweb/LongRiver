@@ -22,7 +22,7 @@ var userSchema = new Schema({
     },
     createTime: {type: Date, default: Date.now}, //创建时间
     department: {
-        id: {type: Number, required: true, default: 3},
+        id: {type: String, required: true, default: 3},
         text: {type: String, required: true, default: '试用用户'}
     }
 
