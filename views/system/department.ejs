@@ -59,7 +59,7 @@
                 })
 
                 .on('create_node.jstree', function (e, data) {
-                    save();
+                 //   save();
 
                 })
                 .on('rename_node.jstree', function (e, data) {
@@ -106,7 +106,7 @@
             return false;
         }
         sel = sel[0];
-        sel = ref.create_node(sel, {type: "default"});
+        sel = ref.create_node(sel, {type: "default",text:"新建部门"});
         if (sel) {
             ref.edit(sel);
         }
@@ -178,18 +178,18 @@
      * @returns {undefined}
      */
     function info_saving() {
-        $('#infobox').removeClass('success').removeClass('error').addClass('waitting').show();
-        //$('#infobox').addAttr('class','waitting');
+        $('#infobox').removeClass('success').removeClass('error').addClass('waitting').fadeTo(400,1,function(){
+            $(this).slideDown(400);
+        });
         $('#info').text('正在保存...');
-        hide_info();
     }
     function info_success() {
-        $('#infobox').removeClass('waitting').removeClass('error').addClass('success').show();
+        $('#infobox').removeClass('waitting').removeClass('error').addClass('success').slideDown(400);
         $('#info').text('保存成功。');
         hide_info();
     }
     function info_error(text) {
-        $('#infobox').removeClass('waitting').removeClass('success').addClass('error').show();
+        $('#infobox').removeClass('waitting').removeClass('success').addClass('error').slideDown(400);
         $('#info').text(text);
         hide_info();
     }
@@ -250,6 +250,7 @@
 
 
 </div> <!-- End .content-box -->
+
 <div class="content-box column-right" id="detailContent">
     <div class="content-box-header">
         <h3>部门信息</h3>
