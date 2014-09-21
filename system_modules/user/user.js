@@ -15,6 +15,7 @@ var userSchema = new Schema({
     username: {type: String, required: true, unique: true}, //用户名
     password: {type: String, required: true}, //密码
     name: {type: String, required: true}, //显示名称
+    enable:{type:Number,required:true,default:1},//状态1可用，0不可用
     role: {//角色,
         id: {type: Number, required: true, default: 0}, //默认：0 游客权限，1.超级管理员 所有权限
         text: {type: String, required: true, default: '试用权限'}//

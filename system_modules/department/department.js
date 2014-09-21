@@ -26,16 +26,16 @@ exports.findDepartment = function (id, callback) {
         if (err) {
             callback(err);
         } else {
-          /* console.info(id);
-            console.info(root);
-            var d =getDepartmentByID(id,root);
-            if(d){
-               callback(null, {id:'0',text:'没有部门'});   
-            }else{
-              callback(null, d);   
-            }*/
-            
-             callback(null, root); 
+            /* console.info(id);
+             console.info(root);
+             var d =getDepartmentByID(id,root);
+             if(d){
+             callback(null, {id:'0',text:'没有部门'});   
+             }else{
+             callback(null, d);   
+             }*/
+
+            callback(null, root);
         }
     });
 };
@@ -111,40 +111,40 @@ function getdepartment(object) {
  * @param {type} callback
  * @returns {undefined}
  */
-/*
- exports.getDepartmentList = function(id, callback) {
- departmentManager.find({id: 100}, function(err, result) {
- if (err) {
- callback(err);
- } else {
- var list = [];
- var base = result[0];
- for (var i = 0; i < base.children.length; i++) {
- var d = {
- id: base.children[i].id,
- text: base.children[i].text
- };
- list.push(d);
- getChildren(base.children[i], list);
- }
- callback(null, list);
- }
- });
- };
- 
- function getChildren(dp, list) {
- 
- if (dp.children && dp.children.length > 0) {
- for (var i = 0; i < dp.children.length; i++) {
- var d = {
- id: dp.children[i].id,
- text: dp.children[i].text
- };
- list.push(d);
- getChildren(dp.children[i], list);
- }
- }
- }
- 
- 
- */
+
+exports.getDepartmentList = function (id, callback) {
+    departmentManager.find({id: 100}, function (err, result) {
+        if (err) {
+            callback(err);
+        } else {
+            var list = [];
+            var base = result[0];
+            for (var i = 0; i < base.children.length; i++) {
+                var d = {
+                    id: base.children[i].id,
+                    text: base.children[i].text
+                };
+                list.push(d);
+                getChildren(base.children[i], list);
+            }
+            callback(null, list);
+        }
+    });
+};
+
+function getChildren(dp, list) {
+
+    if (dp.children && dp.children.length > 0) {
+        for (var i = 0; i < dp.children.length; i++) {
+            var d = {
+                id: dp.children[i].id,
+                text: dp.children[i].text
+            };
+            list.push(d);
+            getChildren(dp.children[i], list);
+        }
+    }
+}
+
+
+

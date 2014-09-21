@@ -12,7 +12,8 @@ app.get('/department', ensureAuthenticated, function(req, res) {
             role.getMenu(req.path, req.session.role, callback);
         },
         function(callback) {
-            departmentManager.findDepartment({}, callback);
+            
+            departmentManager.findDepartment( req.session.user.department.id, callback);
         }
     ], function(err, results) {
         res.render('system/department', {user: req.session.user, menu: results[0], department: results[1]});
