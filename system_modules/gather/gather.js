@@ -35,6 +35,7 @@ exports.QQWeibo = function (url, callback) {
 
 
 exports.sinaWeibo = function (url, callback) {
+    if(url){
     var putinCookie = "http://login.sina.com.cn/visitor/visitor?a=crossdomain&cb=return_back&s="
             + s
             + "&sp=" + sp
@@ -44,7 +45,7 @@ exports.sinaWeibo = function (url, callback) {
                 if (!error && response.statusCode == 200) {
                     console.info(body.toString());
                     var options = {
-                        url: 'http://weibo.com/2836657120/BnRN0q9iw?mod=weibotime',
+                        url: url,
                         headers: {
                             'Cookie': "SUB=" + s + "; SUBP=" + sp
                         }
@@ -74,4 +75,7 @@ exports.sinaWeibo = function (url, callback) {
                     callback("注入cookie失败", null);
                 }
             });
+        }else{
+             callback("url有误", null);
+        }
 };
