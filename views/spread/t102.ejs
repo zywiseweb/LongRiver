@@ -1,0 +1,302 @@
+<%- include ../header %>
+<script src="javascripts/jquery-ui-timepicker-addon.js"></script>
+<script>
+$(function() {
+//-------------腾讯微博评论-------------------
+    var name = $("#taskTitle");
+    var url = $("#url");
+    var doc = $("#doc");
+    var allFields = $([]).add(name).add(url).add(doc);
+
+    var info = $("#163_addInfo");
+    var infobox = $("#infobox");
+   // var urlRegex = "^((http)?://)?comment\\.[0-9a-z_!~*'().&=+$%-]+\\.163\.com/.*/[0-9A-Z]+/[0-9A-Z]+\.html.#";
+    $("#doSubmit").click(function() {
+        var bValid = true;
+        allFields.removeClass("ui-state-error");
+        var accountType=getAccount();
+
+        bValid = bValid && checkUrl();
+        bValid = bValid && checkTime();
+        bValid = bValid && checkRegexp();
+
+        if (doc.val() <= 100) {
+            updateTips("语料为空.");
+            bValid = bValid && false;
+        }
+        if (bValid) {
+            var list=getCount();
+            var param = {
+                task: $("#task").val(),
+                taskTitle: name.val(),
+                url: url.val(),
+                task_type: $("#task_type").val(),
+                accountType:accountType,
+                schedule: list,
+                doc: $("#doc").val()
+
+            };
+            updateTips2("正在提交，请稍后...");
+            $("#duSubmit").hide();
+            $.ajax({
+                type: 'POST',
+                url: "/newsCommentNew",
+                data: param,
+                dataType: "text",
+                success: function(text) {
+                    console.info(text);
+                    if (text === '1') {
+                        updateTips2("添加成功,页面即将调换到列表页。");
+                        setTimeout(function() {
+                            location.href = "/mytask";
+                        }, 1000);
+                    } else {
+                        updateTips2(text);
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus) {
+                    updateTips("添加出错了，请稍后再试。");
+                }
+            });
+        }
+
+    });
+    //获取控量参数 str= : : ;(格式)
+    function getCount(){
+        var str = "";
+        var index = $("#val1").val();
+        for(var i=0;i<=index;i++){
+            if($("#startTime"+i).val()!="" && $("#endTime"+i).val()!="" && $("#sub_count"+i).val()!=""){
+                str+= $("#startTime"+i).val()+ ":";
+                str+= $("#endTime"+i).val()+ ":";
+                str+= $("#sub_count"+i).val()+ ";";
+            }
+        }
+        return str;
+    }
+    // 加载添加控量
+    $("#add").click(
+            function() {
+                var val1 = $("#val1").val();
+                var id = ++val1;
+                var html =' <div id="but'+id+'"><p>从<input type="text" id="startTime'+id+'"  placeholder="开始时间" class="text-input datepicker" >  '+
+                        ' 至<input type="text" id="endTime'+ id +'"  placeholder="结束时间"  class="text-input datepicker">时间段内,执行'+
+                        '<input type="text" placeholder="评论次数" id="sub_count'+id+'" class="text-input">次评论&nbsp;&nbsp;'+
+                        '<img alt="取消" src="images/icons/close.png" id="cancel" onclick="toCancel('+id+') ;" ></p></div>';
+                $("#count").append(html);
+                $("#val1").val(id);
+                $(".datepicker").datetimepicker({dateFormat: "yy-mm-dd"});
+            });
+
+    function updateTips(t) {
+        infobox.removeClass("information");
+        infobox.addClass("error");
+        info.text(t);
+        setTimeout(function() {
+            infobox.removeClass("error");
+            infobox.addClass("information");
+        }, 2000);
+    }
+
+
+    //--------------------------
+    function updateTips2(t) {
+        info.text(t);
+    }
+  //url 和name 的非空校验
+    function checkUrl(){
+       // var url = $("#url").val();
+        if($("#url").val()==""){
+            updateTips("微博地址不能为空");
+            return false;
+        }
+        if($("#taskTitle").val()==""){
+            updateTips("任务标题不能为空");
+            return false;
+        }
+        return true;
+    }
+    //评论数量的校验
+    function checkRegexp(){
+        var index = $("#val1").val();
+        var reg = /^\d+$/;
+        for (var i = 0; i <= index; i++) {
+            if($("#startTime"+i).val()!="" && $("#endTime"+i).val()!=""){//在开始时间和结束时间都不为空的情况下才进行数量的校验
+                var sub_count=$("#sub_count" + i).val();
+                if (!reg.test(sub_count)|| (sub_count == '0')){
+                    updateTips("请输入有效的数量");
+                    return false;
+                }else{
+                    if( $("#sub_count" + i).val() < 0 || $("#sub_count" + i).val() >= 100 ){
+                        updateTips("数量必须在0到100之间");
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    //控量输入时间的校验
+    function checkTime(){
+        var index = $("#val1").val();
+        if($("#startTime0").val() >= $("#endTime0").val()){
+            updateTips("结束时间必须大于开始时间0");
+            return false;
+        }
+        if(index>=1){
+            for(var i=1;i<=index;i++){
+                if($("#startTime"+i).val()!="" || $("#endTime"+i).val()!="" || $("#sub_count" + i).val()!="" ){
+                    if($("#startTime"+i).val()>=$("#endTime"+i).val()){
+                        updateTips("结束时间必须大于开始时间1");
+                        return false;
+                    }else{
+                        for(var j=0;j<=i-1;j++){
+                            if($("#startTime"+i).val()< $("#endTime"+j).val()){
+                                updateTips("时间段不能重叠且请按时间顺序添加控量");
+                                return false;
+                            }
+                        }
+                    }
+                }else{
+                    return true;
+                }
+            }
+            return true;
+        }
+      return true;
+    }
+    //根据输入的地址加载微博信息
+    function loadWeiBoInfo(){
+        var url = $("#url").val();
+        if(strip(url).length > 0){
+            $("#urlMessage").html("<img width=\"20px\" height=\"20px\" src='images/icons/minloader.gif'/>");
+            $.post("#输入网址的校验（腾讯）",{"url" : url},function(data) {//校验微博地址，同时根据微博地址采集该地址下的信息
+                if (!data.flag) {
+                    $("#urlMessage").html("<img width=\"20px\" height=\"20px\" src='images/icons/right.gif'/>");
+                    $("#taskTitle").html("此处拼接采集到的信息");
+                }else{
+                    $("#urlMessage").html("<img width=\"20px\" height=\"20px\" src='images/icons/delete.gif'/>");
+                }
+
+            });
+        }
+    }
+    //格式化日期
+    function p(s) {
+        return s < 10 ? '0' + s: s;
+    }
+    $(".datepicker").datetimepicker({dateFormat: "yy-mm-dd"});
+    var date = new Date();
+    var d = date.getFullYear() + "-" + p((date.getMonth() + 1)) + "-" +p( date.getDate()) + " " +p(date.getHours()) + ":" + p(date.getMinutes());
+    $("#startTime0").val(d);
+    date.setHours(date.getHours() + 1);
+    var d = date.getFullYear() + "-" + p((date.getMonth() + 1)) + "-" +p( date.getDate()) + " " +p(date.getHours()) + ":" + p(date.getMinutes());
+    $("#endTime0").val(d);
+
+});
+function getAccount(){
+        var accountRadio=document.getElementsByName("accountType");
+        for(var i=0;i<accountRadio.length;i++) {
+            if(accountRadio[i].checked==true){
+                var accountValue = accountRadio[i].value;
+                break;
+            }
+        }
+    return accountValue;
+}
+
+function toCancel(obj){
+    var id=obj;
+    $("#but"+id).hide();
+    $("#startTime"+id).val("");
+    $("#endTime"+id).val("");
+    $("#sub_count"+id).val("");
+}
+
+
+</script>
+
+
+<%- include ../body %>
+
+<div class="notification information png_bg" id="infobox">
+    <div id="163_addInfo">
+        请填写以下内容。
+    </div>
+</div>
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>创建腾讯微博评论任务</h3>
+        <ul class="content-box-tabs">
+            <li><a href="/newtask" class="button">返回</a></li> <!-- href must be unique and match the id of target div -->
+        </ul>
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+
+
+
+        <form action="/#" >
+            <fieldset>
+                <input type="hidden" name="task" id="task" value="102"/>
+                <input type="hidden"  id="task_type" value="901"/>
+                <p>
+                    <label>微博地址</label>
+                    <input  class="text-input medium-input" type="text" id="url"  name="medium-input" onblur="loadWeiBoInfo();" /> <span class="input-notification information png_bg">输入要评论的微博地址</span>
+                    <span id="urlMessage"></span>
+                </p>
+
+                <p>
+                    <label>任务标题</label>
+                    <input class="text-input large-input"  type="text" id="taskTitle" name="large-input" />
+                </p>
+
+
+
+                <p>
+                    <label>评论语料</label>
+                    <textarea class="text-input textarea wysiwyg" id="doc" name="textfield" cols="79" rows="10"></textarea>
+                    <br /><small>每一个换行为一条语料</small>
+
+                </p>
+                <p>
+                    <label>执行控制 </label>
+
+                    <input type="hidden" id="val1" value="0" >
+                <div id="count">
+                    <div id="but0">
+                        <p> 从<input type="text" id="startTime0"  placeholder="开始时间"  class="text-input datepicker">
+                            至<input type="text" id="endTime0"  placeholder="结束时间"  class="text-input datepicker">时间段内,执行<input type="text" placeholder="评论次数" id="sub_count0" class="text-input">次评论&nbsp;
+                        </p>
+                    </div>
+                </div>
+                <span><img alt="添加" src="images/icons/add.png" id="add"></span>
+                </p>
+
+                <p>
+                    <label>账号选择</label>
+                    <input type="radio" name="accountType" id="account"  value="1" >全部&nbsp;&nbsp;
+                    <input type="radio" name="accountType" id="privAccount"  value="2" />个人&nbsp;&nbsp;
+                    <input type="radio" name="accountType" id="sysAccount"  value="3" checked="checked" />系统&nbsp;&nbsp;
+                </p>
+                <p>
+                <div class="button" id="doSubmit">&nbsp &nbsp 提交 &nbsp &nbsp</div>
+                </p>
+
+
+
+            </fieldset>
+        </form>
+
+
+
+
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+<%- include ../footer %>
