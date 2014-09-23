@@ -1,0 +1,248 @@
+<%- include ../header %>
+<script src="javascripts/jquery-ui-timepicker-addon.js"></script>
+<script>
+$(function() {
+//-------------HTTP通用请求-------------------
+    var name = $("#taskTitle");
+    var url = $("#url");
+    var allFields = $([]).add(name).add(url);
+    var sub_count = $("#sub_count");
+    var time=$("#time");
+    var info = $("#163_addInfo");
+    var infobox = $("#infobox");
+    //var urlRegex = "^((http)?://)?comment\\.[0-9a-z_!~*'().&=+$%-]+\\.163\.com/.*/[0-9A-Z]+/[0-9A-Z]+\.html.#";
+    $("#doSubmit").click(function() {
+        var bValid = true;
+        allFields.removeClass("ui-state-error");
+        bValid = bValid && checkRegexp(sub_count, /^[0-9]*$/, "请输入正确数量。");
+        bValid = bValid && checkRegexp(time, /^[0-9]*$/, "请输入正确的间隔时间。");
+        bValid = bValid && checkParm();
+        if(name.val()==""){
+            updateTips("任务名称不能为空");
+            bValid = bValid && false;
+        }
+        if(url.val()==""){
+            updateTips("url不能为空");
+            bValid = bValid && false;
+        }
+        if (sub_count.val() < 1) {
+            updateTips("数量必须大于0.");
+            bValid = bValid && false;
+        }
+        if (sub_count.val() > 100) {
+            updateTips("数量必须小于100.");
+            bValid = bValid && false;
+        }
+        if (time.val() =="") {
+            updateTips("时间间隔为空");
+            bValid = bValid && false;
+        }
+        if (bValid) {
+            var list=getParm();
+            var method= getType();
+            var param = {
+                task: $("#task").val(),
+                taskTitle: name.val(),
+                url: url.val(),
+                task_type: $("#task_type").val(),
+                sub_count: sub_count.val(),
+                time:time.val(),
+                method:getType(),
+                schedule:list
+            };
+            updateTips2("正在提交，请稍后...");
+            $("#duSubmit").hide();
+            $.ajax({
+                type: 'POST',
+                url: "/newsCommentNew",
+                data: param,
+                dataType: "text",
+                success: function(text) {
+                    console.info(text);
+                    if (text === '1') {
+                        updateTips2("添加成功,页面即将调换到列表页。");
+                        setTimeout(function() {
+                            location.href = "/mytask";
+                        }, 1000);
+                    } else {
+                        updateTips2(text);
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus) {
+                    updateTips("添加出错了，请稍后再试。");
+                }
+            });
+        }
+
+    });
+
+    //获取参数 str= : : ;(格式)
+    function getParm(){
+        var str = "";
+        var index = $("#val1").val();
+        for(var i=0;i<=index;i++){
+            if($("#parmKey"+i).val()!="" && $("#parmValue"+i).val()!=""){
+                str+= $("#parmKey"+i).val()+ ":";
+                str+= $("#parmValue"+i).val()+ ";";
+            }
+        }
+        return str;
+    }
+    //加载添加板块
+    $("#add").click(
+            function() {
+                var val1 = $("#val1").val();
+                var id = ++val1;
+                var html =' <div id="parm'+id+'"><p><input type="text" id="parmKey'+id+'"  placeholder="参数名" class="text-input" >&nbsp;&nbsp;&nbsp;&nbsp;  '+
+                        ' <input type="text" id="parmValue'+ id +'"  placeholder="参数值" class="text-input" >&nbsp;'+
+                        '<img alt="取消" src="images/icons/close.png" id="cancel" onclick="toCancel('+id+') ;" ></p></div>';
+                $("#parm").append(html);
+                $("#val1").val(id);
+            });
+    function updateTips(t) {
+        infobox.removeClass("information");
+        infobox.addClass("error");
+        info.text(t);
+        setTimeout(function() {
+            infobox.removeClass("error");
+            infobox.addClass("information");
+        }, 2000);
+    }
+
+
+    //--------------------------
+    function updateTips2(t) {
+        info.text(t);
+    }
+    function checkRegexp(o, regexp, n) {
+        if (!(regexp.test(o.val()))) {
+            updateTips(n);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //参数校验
+    function checkParm(){
+        var index = $("#val1").val();
+        for(var i=0;i<=index;i++){
+            if($("#parmKey"+i).val()!="" && $("#parmValue"+i).val()=="" ){//参数名  参数值  同时为空  或者同时不为空时 才可以
+                updateTips("参数值为空");
+                return false;
+            }
+            if($("#parmKey"+i).val()=="" && $("#parmValue"+i).val()!="" ){
+                updateTips("参数名为空");
+                return false;
+            }
+        }
+        return true;
+    }
+});
+function toCancel(obj){
+    var id=obj;
+    $("#parm"+id).hide();
+    $("#parmKey"+id).val("");
+    $("#parmValue"+id).val("");
+}
+//是否显示携带参数
+function sel(){
+    var commentChk=document.getElementsByName("select");
+    for(var i=0;i<commentChk.length;i++) {
+        if(commentChk[i].checked){
+            $("#parm").show();
+        }else{
+            $("#parm").hide();
+        }
+    }
+}
+//获取单选按钮的值
+function getType(){
+    var tyeRadio=document.getElementsByName("Type");
+    for(var i=0;i<tyeRadio.length;i++) {
+        if(tyeRadio[i].checked){
+            var typeValue = tyeRadio[i].value;
+            break;
+        }
+    }
+    return typeValue;
+}
+
+</script>
+
+
+<%- include ../body %>
+
+<div class="notification information png_bg" id="infobox">
+    <div id="163_addInfo">
+        请填写以下内容。
+    </div>
+</div>
+<div class="content-box"><!-- Start Content Box -->
+
+    <div class="content-box-header">
+        <h3>HTTP通用请求</h3>
+        <ul class="content-box-tabs">
+            <li><a href="/newtask" class="button">返回</a></li> <!-- href must be unique and match the id of target div -->
+        </ul>
+
+        <div class="clear"></div>
+    </div> <!-- End .content-box-header -->
+    <div class="content-box-content">
+
+
+
+        <form action="/#" >
+            <fieldset>
+                <input type="hidden" name="task" id="task" value="httprequest"/>
+                <input type="hidden"  id="task_type" value="901"/>
+                <p>
+                    <label>任务名称</label>
+                    <input class="text-input small-input"  type="text" id="taskTitle" name="small-input" />
+                </p>
+                <p>
+                    <label>URL</label>
+                    <input  class="text-input medium-input" type="text" id="url"  name="medium-input"  />
+                    <span id="urlMessage"></span>
+                </p>
+                <p>
+                    <label>请求方式</label>
+                    <input type="radio" name="type" id="type1"  value="1" checked  />GET &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" name="type" id="type2"  value="2"  />POST&nbsp;&nbsp;&nbsp;
+                </p>
+                <p>
+                    <label><input type="checkbox" name="select" onclick="sel();"  />参数</label>
+                    <input type="hidden" id="val1" value="0" >
+                    <div id="parm" style="display: none">
+                    <span><img alt="添加" src="images/icons/add.png" id="add"></span>
+                        <div id="parm0">
+                        <p><input class="text-input "  type="text" id="parmKey0" name="small-input"  placeholder="参数名"  />&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input class="text-input "  type="text" id="parmValue0" name="small-input" placeholder="参数值" />
+                        <img alt="取消" src="images/icons/close.png" id="cancel"  onclick="toCancel(0) ;">
+                        </p>
+                        </div>
+
+                   </div>
+
+                </p>
+
+               <p>数量<input type="text" id="sub_count" class="text-input">&nbsp;&nbsp;间隔（秒）<input type="text" id="time" class="text-input"></p>
+                <p>
+                <div class="button" id="doSubmit">&nbsp &nbsp 提交 &nbsp &nbsp</div>
+                </p>
+
+
+
+            </fieldset>
+        </form>
+
+
+
+
+    </div> <!-- End .content-box-content -->
+
+</div> <!-- End .content-box -->
+
+
+
+<%- include ../footer %>

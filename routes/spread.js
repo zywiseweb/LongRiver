@@ -228,6 +228,33 @@ exports.route = function(app, ensureAuthenticated) {
             res.render('spread/t301', {user: req.session.user, menu: results[0]});
         });
     });
+    app.get('/t401', ensureAuthenticated, function(req, res) {
+        async.parallel([
+            function(callback) {
+                role.getMenu(req.path, req.session.role, callback);
+            }
+        ], function(err, results) {
+            res.render('spread/t301', {user: req.session.user, menu: results[0]});
+        });
+    });
+    app.get('/t601', ensureAuthenticated, function(req, res) {
+        async.parallel([
+            function(callback) {
+                role.getMenu(req.path, req.session.role, callback);
+            }
+        ], function(err, results) {
+            res.render('spread/t301', {user: req.session.user, menu: results[0]});
+        });
+    });
+    app.get('/t701', ensureAuthenticated, function(req, res) {
+        async.parallel([
+            function(callback) {
+                role.getMenu(req.path, req.session.role, callback);
+            }
+        ], function(err, results) {
+            res.render('spread/t301', {user: req.session.user, menu: results[0]});
+        });
+    });
    //网易论坛顶贴任务
     app.get('/t302', ensureAuthenticated, function(req, res) {
         async.parallel([
@@ -238,6 +265,34 @@ exports.route = function(app, ensureAuthenticated) {
             res.render('spread/t302', {user: req.session.user, menu: results[0]});
         });
     });
+    app.get('/t402', ensureAuthenticated, function(req, res) {
+        async.parallel([
+            function(callback) {
+                role.getMenu(req.path, req.session.role, callback);
+            }
+        ], function(err, results) {
+            res.render('spread/t302', {user: req.session.user, menu: results[0]});
+        });
+    });
+    app.get('/t602', ensureAuthenticated, function(req, res) {
+        async.parallel([
+            function(callback) {
+                role.getMenu(req.path, req.session.role, callback);
+            }
+        ], function(err, results) {
+            res.render('spread/t302', {user: req.session.user, menu: results[0]});
+        });
+    });
+    app.get('/t702', ensureAuthenticated, function(req, res) {
+        async.parallel([
+            function(callback) {
+                role.getMenu(req.path, req.session.role, callback);
+            }
+        ], function(err, results) {
+            res.render('spread/t302', {user: req.session.user, menu: results[0]});
+        });
+    });
+
     //新建评论任务
     app.post('/newsCommentNew', ensureAuthenticated, function(req, res) {
         taskManager.addNewsCommentTask(req, function(err) {
