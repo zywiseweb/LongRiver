@@ -41,7 +41,7 @@ exports.route = function(app, ensureAuthenticated) {
                 userManager.findPagination(
                         {
                             search: query,
-                            columns: 'id name username role.text department.text',
+                            columns: 'id name username enable role.text department.text',
                             num: page,
                             limit: 10
                         }, callback);

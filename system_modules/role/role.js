@@ -73,7 +73,7 @@ exports.authRole = function(roleParam, callback) {
     });
 };
 /**
- * 
+ * 判断此级别及下级中是否包括给定的权限
  * @param {type} rutroutee
  * @param {type} access
  * @returns {Boolean}
@@ -190,7 +190,9 @@ exports.getHome = function(roleID, callback) {
 exports.getMenu = function(route, role, callback) {
     var menu = {
         systems: [],
-        current: []
+        current: [],
+        currentSubRole:[]
+        
     };
     var access = role.access;
     var getCurrent = false;
@@ -221,7 +223,7 @@ exports.getMenu = function(route, role, callback) {
                             system.route = sub[j].route;
                         }
                         if (sub[j].sub && sub[j].sub.length > 0) {
-                            for (var k = 0; k < sub[j].sub.length; k++) {
+                            for (var k = 0; k < sub[j].sub.length; k++) {//二级模块
                                 var m2 = {
                                     text: sub[j].sub[k].text,
                                     route: sub[j].sub[k].route,
@@ -230,8 +232,8 @@ exports.getMenu = function(route, role, callback) {
                                 if (chickRole(route, sub[j].sub[k])) {
                                     m2.current = true;
                                     m.current = true;
+                                    menu.currentSubRole = sub[j].sub[k].sub;//设置当前权限子权限列表，页面内容需要判断下级页面，比如编辑删除等。
                                 }
-
                                 m.sub.push(m2);
                                 if (!system.route) {
                                     system.route = sub[j].sub[k].route;

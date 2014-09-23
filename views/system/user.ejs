@@ -2,82 +2,121 @@
 
 
 <%- include ../body %>  
-<div class="content-box"><!-- Start Content Box -->
+<%
+var deleteuser = false;
+var edituser = false;
+var ResetPW = false;
+var control = false;
+for(var i=0;i<menu.currentSubRole.length;i++){
+    if(menu.currentSubRole[i].route==="/userDelete"){
+    deleteuser = true;
+    }else if(menu.currentSubRole[i].route==="/userEdit"){
+    edituser = true;
+    }else if(menu.currentSubRole[i].route==="/passwordReset"){
+    ResetPW = true;
+    }
 
-    <div class="content-box-header">
-        <h3>用户信息</h3>
-        <ul class="content-box-tabs">
+    }
+    control= deleteuser||ResetPW||edituser;
+    %>
+    <div class="content-box"><!-- Start Content Box -->
 
-            <li><a href="/userAdd" class="button" id="create-user" >添加用户</a></li> <!-- href must be unique and match the id of target div -->
+        <div class="content-box-header">
+            <h3>用户信息</h3>
+            <ul class="content-box-tabs">
 
-        </ul>
+                <li><a href="/userAdd" class="button" id="create-user" >添加用户</a></li> <!-- href must be unique and match the id of target div -->
 
-
-        <div class="clear"></div>
-    </div> <!-- End .content-box-header -->
-    <div class="content-box-content">
-        <table>
-
-            <thead>
-                <tr>
-                    <th>名称</th>
-                    <th>账号</th>
-                    <th>权限</th>
-                    <th>部门</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <td colspan="6">
-
-                        <div class="pagination">
+            </ul>
 
 
-                            
-                             <% if( users.currentPage >1  ){%>
-                            <a class="number current" href=<%= '/user?p=1'%> >首页</a>
-                            <a class="number current" href=<%= '/user?p=' + (users.currentPage-1)  %> >前一页</a>
+            <div class="clear"></div>
+        </div> <!-- End .content-box-header -->
+        <div class="content-box-content">
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>账号</th>
+                        <th>权限</th>
+                        <th>部门</th>
+                        <th>状态</th>
+                        <% if(control){ %>
+                        <th>操作</th>
+                        <% } %>
+
+
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="6">
+
+                            <div class="pagination">
+
+
+
+                                <% if( users.currentPage >1  ){%>
+                                <a class="number current" href=<%= '/user?p=1'%> >首页</a>
+                                <a class="number current" href=<%= '/user?p=' + (users.currentPage-1)  %> >前一页</a>
+                                <% } %>
+
+
+                                第<%= users.currentPage  %>页 (共 <%= users.pageCount %> 页）
+
+
+
+                                <% if( users.pageCount > users.currentPage){ %>
+                                <a class="number current" href=<%= '/user?p=' + (users.currentPage+1) %> >下一页</a>
+                                <a class="number current" href=<%= '/user?p=' + users.pageCount %>  > 尾页</a>
+                                <% } %>
+
+                            </div> <!-- End .pagination -->
+                            <div class="clear"></div>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+
+                    <%  for(var i=0;i<users.results.length;i++){ %>
+                    <tr>
+                        <td><%= users.results[i].name %></td>
+                        <td><%= users.results[i].username %></td>
+                        <td><%= users.results[i].role.text %></td>
+                        <td><%= users.results[i].department.text %></td>
+                        <%if(users.results[i].enable === 1){ %>
+                        <td><img src="images/icons/enable.png" alt="可用" /></td>
+                        <% }else{ %>
+                        <td><img src="images/icons/error.png" alt="不可用" /></td>
+                        <% }%>
+
+                        <td>
+                            <% if(edituser){ %>
+                            <a href="/userEdit?id=<%= users.results[i].id %>" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
                             <% } %>
 
-
-                            第<%= users.currentPage  %>页 (共 <%= users.pageCount %> 页）
-
-
-
-                            <% if( users.pageCount > users.currentPage){ %>
-                            <a class="number current" href=<%= '/user?p=' + (users.currentPage+1) %> >下一页</a>
-                            <a class="number current" href=<%= '/user?p=' + users.pageCount %>  > 尾页</a>
+                            <% if(ResetPW){ %>
+                            <a href="/passwordReset?id=<%= users.results[i].id %>" title="删除"><img src="images/icons/cross.png" alt="重置密码" /></a> 
                             <% } %>
-                            
-                        </div> <!-- End .pagination -->
-                        <div class="clear"></div>
-                    </td>
-                </tr>
-            </tfoot>
-            <tbody>
 
-                <%  for(var i=0;i<users.results.length;i++){ %>
-                <tr>
-                    <td><%= users.results[i].name %></td>
-                    <td><%= users.results[i].username %></td>
-                    <td><%= users.results[i].role.text %></td>
-                    <td><%= users.results[i].department.text %></td>
-                    <td>
-                        <!-- Icons -->
-                        <a href="/userEdit?id=<%= users.results[i].id %>" title="编辑"><img src="images/icons/pencil.png" alt="编辑" /></a>
-                        <a href="/userdelete?id=<%= users.results[i].id %>" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
-                    </td></tr>
-                <% } %>
+                            <% if(deleteuser){ %>
+                            <a href="/userDelete?id=<%= users.results[i].id %>" title="删除"><img src="images/icons/cross.png" alt="删除" /></a> 
+                            <% } %>
+                            <!-- Icons -->
+
+
+                        </td></tr>
+                    <% } %>
 
 
 
 
-                </tbodu>
-        </table>
-    </div> <!-- End .content-box-content -->
+                    </tbodu>
+            </table>
+        </div> <!-- End .content-box-content -->
 
-</div> <!-- End .content-box -->
+    </div> <!-- End .content-box -->
 
 
 
@@ -85,4 +124,4 @@
 
 
 
-<%- include ../footer %>
+    <%- include ../footer %>
